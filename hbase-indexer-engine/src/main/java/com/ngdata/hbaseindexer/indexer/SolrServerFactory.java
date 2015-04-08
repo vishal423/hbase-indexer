@@ -24,27 +24,34 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.ngdata.hbaseindexer.SolrConnectionParams;
 import com.ngdata.hbaseindexer.util.solr.SolrConnectionParamUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.HttpClient;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 /**
  * Create cloud or classic {@link SolrServer} instances from a map of solr connection parameters.
  */
 public class SolrServerFactory {
-    public static SolrServer createCloudSolrServer(Map<String, String> connectionParameters) throws MalformedURLException {
+	
+    private static final Log log = LogFactory.getLog(SolrServerFactory.class);
+	
+    public static SolrClient createCloudSolrServer(Map<String, String> connectionParameters) throws MalformedURLException {
         String solrZk = connectionParameters.get(SolrConnectionParams.ZOOKEEPER);
-        CloudSolrServer solr = new CloudSolrServer(solrZk);
+        CloudSolrClient solr = new CloudSolrClient(solrZk);
         String collection = connectionParameters.get(SolrConnectionParams.COLLECTION);
         solr.setDefaultCollection(collection);
+        solr.connect();
+        log.info("Established connection to SolrCloud at "+solrZk+"; default collection is: "+collection);
         return solr;
     }
 
-    public static List<SolrServer> createHttpSolrServers(Map<String, String> connectionParams, HttpClient httpClient) {
-        List<SolrServer> result = Lists.newArrayList();
+    public static List<SolrClient> createHttpSolrServers(Map<String, String> connectionParams, HttpClient httpClient) {
+        List<SolrClient> result = Lists.newArrayList();
         for (String shard : SolrConnectionParamUtil.getShards(connectionParams)) {
-            result.add(new HttpSolrServer(shard, httpClient));
+            result.add(new HttpSolrClient(shard, httpClient));
         }
         if (result.size() == 0) {
             throw new RuntimeException(

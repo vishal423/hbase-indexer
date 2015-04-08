@@ -96,7 +96,7 @@ public class ForkedTreeMergeOutputFormat extends FileOutputFormat<Text, NullWrit
       try {
         Directory mergedIndex = new HdfsDirectory(workDir, context.getConfiguration());
         
-        IndexWriterConfig writerConfig = new IndexWriterConfig(Version.LUCENE_CURRENT, null)
+        IndexWriterConfig writerConfig = new IndexWriterConfig(null)
             .setOpenMode(OpenMode.CREATE).setUseCompoundFile(false)
             //.setMergePolicy(mergePolicy) // TODO: grab tuned MergePolicy from solrconfig.xml?
             //.setMergeScheduler(...) // TODO: grab tuned MergeScheduler from solrconfig.xml?

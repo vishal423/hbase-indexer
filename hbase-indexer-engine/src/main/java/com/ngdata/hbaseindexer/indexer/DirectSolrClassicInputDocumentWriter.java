@@ -27,7 +27,7 @@ import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrException.ErrorCode;
@@ -53,7 +53,7 @@ import org.apache.solr.common.SolrInputDocument;
 public class DirectSolrClassicInputDocumentWriter implements SolrInputDocumentWriter {
 
     private Log log = LogFactory.getLog(getClass());
-    private List<SolrServer> solrServers;
+    private List<SolrClient> solrServers;
     private Meter indexAddMeter;
     private Meter indexDeleteMeter;
     private Meter solrAddErrorMeter;
@@ -61,7 +61,7 @@ public class DirectSolrClassicInputDocumentWriter implements SolrInputDocumentWr
     private Meter documentAddErrorMeter;
     private Meter documentDeleteErrorMeter;
 
-    public DirectSolrClassicInputDocumentWriter(String indexName, List<SolrServer> solrServers) {
+    public DirectSolrClassicInputDocumentWriter(String indexName, List<SolrClient> solrServers) {
         this.solrServers = solrServers;
 
         indexAddMeter = Metrics.newMeter(metricName(getClass(), "Index adds", indexName), "Documents added to Solr index",
@@ -175,7 +175,7 @@ public class DirectSolrClassicInputDocumentWriter implements SolrInputDocumentWr
     @Override
     public void deleteByQuery(String deleteQuery) throws SolrServerException, IOException {
         try {
-            for (SolrServer server : solrServers) {
+            for (SolrClient server : solrServers) {
                 server.deleteByQuery(deleteQuery);
             }
         } catch (SolrException e) {
@@ -193,7 +193,7 @@ public class DirectSolrClassicInputDocumentWriter implements SolrInputDocumentWr
 
     @Override
     public void close() {
-        for (SolrServer server : solrServers) {
+        for (SolrClient server : solrServers) {
             server.shutdown();
         }
     }

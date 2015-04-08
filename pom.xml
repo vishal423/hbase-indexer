@@ -19,7 +19,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <properties>
-    <version.solr>4.4.0</version.solr>
+    <version.solr>5.0.0</version.solr>
     <version.guava>11.0.2</version.guava>
     <version.joda-time>1.6</version.joda-time>
     <version.slf4j>1.7.5</version.slf4j>
@@ -34,7 +34,7 @@
     <version.hadoop>2.0.0-cdh4.4.0</version.hadoop>
     <version.zookeeper>3.4.5-cdh4.4.0</version.zookeeper>
     <version.jackson>1.8.8</version.jackson>
-    <version.httpclient>4.2.5</version.httpclient>
+    <version.httpclient>4.4.1</version.httpclient>
     <version.kite>0.13.0</version.kite>
     <version.search>1.2.0</version.search>
     <version.search.hbase98>1.0.0-cdh5.0.0</version.search.hbase98>
@@ -821,6 +821,7 @@
 
     <pluginManagement>
       <plugins>
+      <!-- 
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
@@ -845,7 +846,6 @@
               <exclude>**/src/it/resources/**</exclude>
               <exclude>**/META-INF/services/**</exclude>
               <exclude>**/ForkedAlphaNumericComparator.java</exclude>
-              <!-- MIT -->
             </excludes>
           </configuration>
           <executions>
@@ -857,7 +857,7 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
+        </plugin>-->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>

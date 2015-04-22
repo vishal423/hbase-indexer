@@ -39,6 +39,7 @@ import com.ngdata.hbaseindexer.conf.IndexerConfBuilder;
 import com.ngdata.hbaseindexer.parse.ResultToSolrMapper;
 import com.ngdata.hbaseindexer.parse.SolrUpdateWriter;
 import com.ngdata.sep.SepEvent;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTableInterface;
@@ -103,7 +104,7 @@ public class IndexingEventListenerTest {
         Indexer indexer = Indexer.createIndexer("index name", conf, "record", mapper, tablePool, null, solrDocumentWriter);
         IndexingEventListener indexingEventListener = new IndexingEventListener(indexer, TABLE_A, false);
 
-        List<KeyValue> kvs = Lists.newArrayList(new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
+        List<Cell> kvs = Lists.newArrayList((Cell)new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
                 Bytes.toBytes("qual"), Bytes.toBytes("value")));
         SepEvent event = new SepEvent(Bytes.toBytes(TABLE_A), Bytes.toBytes("row1"), kvs, null);
         indexingEventListener.processEvents(Collections.singletonList(event));
@@ -118,7 +119,7 @@ public class IndexingEventListenerTest {
     static ResultToSolrMapper createHbaseToSolrMapper(final boolean containsRequiredDataReturnVal) {
         return new ResultToSolrMapper() {
             @Override
-            public boolean isRelevantKV(KeyValue kv) {
+            public boolean isRelevantKV(Cell kv) {
                 return true;
             }
 
@@ -148,7 +149,7 @@ public class IndexingEventListenerTest {
         Indexer indexer = Indexer.createIndexer("index name", conf, "record", mapper, tablePool, null, solrDocumentWriter);
         IndexingEventListener indexingEventListener = new IndexingEventListener(indexer, TABLE_A, false);
 
-        List<KeyValue> kvs = Lists.newArrayList(new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
+        List<Cell> kvs = Lists.newArrayList((Cell)new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
                 Bytes.toBytes("qual"), Bytes.toBytes("val")));
         SepEvent event = new SepEvent(Bytes.toBytes(TABLE_A), Bytes.toBytes("row1"), kvs, null);
         indexingEventListener.processEvents(Collections.singletonList(event));
@@ -168,12 +169,12 @@ public class IndexingEventListenerTest {
 
         ResultToSolrMapper mapper = createHbaseToSolrMapper(false);
 
-        when(tableA.get(any(Get.class))).thenReturn(newResult(Lists.newArrayList(new KeyValue())));
+        when(tableA.get(any(Get.class))).thenReturn(newResult(Lists.newArrayList((Cell)new KeyValue())));
 
         Indexer indexer = Indexer.createIndexer("index name", conf, "record", mapper, tablePool, null, solrDocumentWriter);
         IndexingEventListener indexingEventListener = new IndexingEventListener(indexer, TABLE_A, false);
 
-        List<KeyValue> kvs = Lists.newArrayList(new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
+        List<Cell> kvs = Lists.newArrayList((Cell)new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
                 Bytes.toBytes("qual"), Bytes.toBytes("value")));
         SepEvent event = new SepEvent(Bytes.toBytes(TABLE_A), Bytes.toBytes("row1"), kvs, null);
         indexingEventListener.processEvents(Collections.singletonList(event));
@@ -197,7 +198,7 @@ public class IndexingEventListenerTest {
         Indexer indexer = Indexer.createIndexer("index name", conf, "record", mapper, tablePool, null, solrDocumentWriter);
         IndexingEventListener indexingEventListener = new IndexingEventListener(indexer, TABLE_A, false);
 
-        List<KeyValue> kvs = Lists.newArrayList(new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
+        List<Cell> kvs = Lists.newArrayList((Cell)new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("cf"),
                 Bytes.toBytes("qual"), Bytes.toBytes("value")));
         SepEvent event = new SepEvent(Bytes.toBytes(TABLE_A), Bytes.toBytes("row1"), kvs, null);
         indexingEventListener.processEvents(Collections.singletonList(event));
@@ -217,7 +218,7 @@ public class IndexingEventListenerTest {
 
         ResultToSolrMapper mapper = new ResultToSolrMapper() {
             @Override
-            public boolean isRelevantKV(KeyValue kv) {
+            public boolean isRelevantKV(Cell kv) {
                 return Bytes.toString(kv.getFamily()).equals("messages");
             }
 
@@ -240,8 +241,8 @@ public class IndexingEventListenerTest {
         Indexer indexer = Indexer.createIndexer("index name", conf, TABLE_A, mapper, null, null, solrDocumentWriter);
         IndexingEventListener indexingEventListener = new IndexingEventListener(indexer, TABLE_A, false);
 
-        List<KeyValue> kvs = Lists.newArrayList(
-                new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("messages"), Bytes.toBytes("msg1"),
+        List<Cell> kvs = Lists.newArrayList(
+                (Cell)new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("messages"), Bytes.toBytes("msg1"),
                         Bytes.toBytes("the message")), new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("messages"),
                         Bytes.toBytes("msg2"), Bytes.toBytes("another message")));
 
@@ -276,8 +277,8 @@ public class IndexingEventListenerTest {
         ResultToSolrMapper mapper = createHbaseToSolrMapper(true);
         Indexer indexer = Indexer.createIndexer("index name", indexerConf, tablePrefix+ ".*", mapper, tablePool, null, solrDocumentWriter);
         IndexingEventListener indexingEventListener = new IndexingEventListener(indexer, tablePrefix+ ".*", true);
-        List<KeyValue> kvs = Lists.newArrayList(
-                new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("messages"), Bytes.toBytes("msg1"),
+        List<Cell> kvs = Lists.newArrayList(
+                (Cell)new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("messages"), Bytes.toBytes("msg1"),
                         Bytes.toBytes("the message")), new KeyValue(Bytes.toBytes("row1"), Bytes.toBytes("messages"),
                 Bytes.toBytes("msg2"), Bytes.toBytes("another message")));
 

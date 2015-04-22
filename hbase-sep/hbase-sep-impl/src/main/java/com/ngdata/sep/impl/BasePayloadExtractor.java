@@ -17,8 +17,10 @@ package com.ngdata.sep.impl;
 
 import com.google.common.base.Preconditions;
 import com.ngdata.sep.PayloadExtractor;
-import org.apache.hadoop.hbase.KeyValue;
+
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.CellUtil;
 
 /**
  * Extracts payload data from incoming row mutation events that have been distributed via the SEP.
@@ -59,10 +61,11 @@ public class BasePayloadExtractor implements PayloadExtractor {
      * @param keyValue contains a (partial) row mutation which may include payload data
      * @return the extracted payload data, or null if no payload data is included in the supplied {@code KeyValue}
      */
+    
     @Override
-    public byte[] extractPayload(byte[] tableName, KeyValue keyValue) {
-        if (Bytes.equals(this.tableName, tableName) && keyValue.matchingColumn(columnFamily, columnQualifier)) {
-            return keyValue.getValue();
+    public byte[] extractPayload(byte[] tableName, Cell keyValue) {
+        if (Bytes.equals(this.tableName, tableName) && CellUtil.matchingColumn(keyValue, columnFamily, columnQualifier)) {
+            return keyValue.getValueArray();
         } else {
             return null;
         }

@@ -16,6 +16,7 @@
 package com.ngdata.hbaseindexer.uniquekey;
 
 import com.ngdata.hbaseindexer.conf.IndexerConf;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
 
 /**
@@ -47,7 +48,7 @@ public interface UniqueKeyFormatter {
      * 
      * @param keyValue value to be formatted
      */
-    String formatKeyValue(KeyValue keyValue);
+    String formatKeyValue(Cell keyValue);
     
     /**
      * Perform the reverse formatting of a row key.

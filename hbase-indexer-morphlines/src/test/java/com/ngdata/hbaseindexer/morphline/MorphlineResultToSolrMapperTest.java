@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.NavigableSet;
 
 import org.kitesdk.morphline.api.Record;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
@@ -37,6 +38,8 @@ import com.google.common.collect.Multimap;
 import com.ngdata.hbaseindexer.conf.FieldDefinition;
 import com.ngdata.hbaseindexer.conf.FieldDefinition.ValueSource;
 import com.ngdata.hbaseindexer.parse.SolrUpdateWriter;
+
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
@@ -72,8 +75,8 @@ public class MorphlineResultToSolrMapperTest {
             MorphlineResultToSolrMapper.MORPHLINE_FILE_PARAM, "src/test/resources/test-morphlines/extractHBaseCells.conf")
             );
 
-        KeyValue kvA = new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes(42));
-        KeyValue kvB = new KeyValue(ROW, COLUMN_FAMILY_B, QUALIFIER_B, "dummy value".getBytes("UTF-8"));
+        Cell kvA = (Cell) new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes(42));
+        Cell kvB = (Cell) new KeyValue(ROW, COLUMN_FAMILY_B, QUALIFIER_B, "dummy value".getBytes("UTF-8"));
         Result result = newResult(Lists.newArrayList(kvA, kvB));
 
         Multimap expectedMap = ImmutableMultimap.of("fieldA", 42, "fieldB", "dummy value");
@@ -199,7 +202,7 @@ public class MorphlineResultToSolrMapperTest {
   
         MorphlineResultToSolrMapper resultMapper = createMorphlineMapper(fieldDef);
   
-        Result result = newResult(Lists.newArrayList(new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
+        Result result = newResult(Lists.newArrayList((Cell) new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
         
         assertTrue(resultMapper.containsRequiredData(result));
     }
@@ -211,7 +214,7 @@ public class MorphlineResultToSolrMapperTest {
         
         MorphlineResultToSolrMapper resultMapper = createMorphlineMapper(fieldDef);
         
-        Result result = newResult(Lists.newArrayList(new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
+        Result result = newResult(Lists.newArrayList((Cell) new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
         
         assertFalse(resultMapper.containsRequiredData(result));
     }

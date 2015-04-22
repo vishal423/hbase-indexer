@@ -22,7 +22,8 @@ import java.util.NavigableMap;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.ngdata.hbaseindexer.parse.ByteArrayExtractor;
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -70,8 +71,8 @@ public abstract class AbstractPrefixMatchingExtractor implements ByteArrayExtrac
     }
     
     @Override
-    public boolean isApplicable(KeyValue keyValue) {
-        return keyValue.matchingFamily(columnFamily) && Bytes.startsWith(keyValue.getQualifier(), prefix);
+    public boolean isApplicable(Cell keyValue) {
+        return CellUtil.matchingFamily(keyValue, columnFamily) && Bytes.startsWith(CellUtil.cloneQualifier(keyValue), prefix);
     }
 
     @Override

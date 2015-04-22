@@ -29,7 +29,7 @@ import com.ngdata.hbaseindexer.parse.extract.ByteArrayExtractors;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.solr.common.SolrInputDocument;
@@ -116,7 +116,7 @@ public class DefaultResultToSolrMapper implements ResultToSolrMapper {
     }
 
     @Override
-    public boolean isRelevantKV(KeyValue kv) {
+    public boolean isRelevantKV(Cell kv) {
         for (ByteArrayExtractor extractor : extractors) {
             if (extractor.isApplicable(kv)) {
                 return true;

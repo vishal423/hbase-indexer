@@ -24,7 +24,7 @@ import java.util.NavigableSet;
 import java.util.TreeMap;
 
 import com.ngdata.hbaseindexer.ConfigureUtil;
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -53,13 +53,10 @@ import com.ngdata.hbaseindexer.parse.ResultToSolrMapper;
 import com.ngdata.hbaseindexer.parse.SolrUpdateWriter;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.ngdata.sep.impl.HBaseShims.newGet;
 
@@ -190,7 +187,7 @@ final class LocalMorphlineResultToSolrMapper implements ResultToSolrMapper, Conf
     }
 
     @Override
-    public boolean isRelevantKV(KeyValue kv) {
+    public boolean isRelevantKV(Cell kv) {
         if (isSafeMode) {
             return true;
         }

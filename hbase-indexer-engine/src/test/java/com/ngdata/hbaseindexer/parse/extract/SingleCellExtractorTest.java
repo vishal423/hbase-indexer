@@ -25,6 +25,7 @@ import java.util.Collections;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -82,14 +83,14 @@ public class SingleCellExtractorTest {
 
     @Test
     public void testContainsTarget_True() {
-        Result result = newResult(Lists.newArrayList(new KeyValue(ROW, COLUMN_FAMILY, COLUMN_QUALIFIER,
+        Result result = newResult(Lists.newArrayList((Cell)new KeyValue(ROW, COLUMN_FAMILY, COLUMN_QUALIFIER,
                 Bytes.toBytes("value"))));
         assertTrue(extractor.containsTarget(result));
     }
 
     @Test
     public void testContainsTarget_False() {
-        Result result = newResult(Lists.newArrayList(new KeyValue(ROW, COLUMN_FAMILY,
+        Result result = newResult(Lists.newArrayList((Cell)new KeyValue(ROW, COLUMN_FAMILY,
                 Bytes.toBytes("wrong qualifier"), Bytes.toBytes("value"))));
         assertFalse(extractor.containsTarget(result));
     }

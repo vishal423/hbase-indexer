@@ -261,6 +261,57 @@
         </dependency>
       </dependencies>  
     </profile>
+    
+    <profile>
+      <id>1.1.0</id>
+      <activation>
+        <property>
+          <name>hbase.api</name>
+          <value>1.1.0</value>
+        </property>
+      </activation>
+
+      <properties>
+        <log4j.properties.file>log4j-1.1.0.properties</log4j.properties.file>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-client</artifactId>
+          <version>2.7.0</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-minicluster</artifactId>
+          <version>2.7.0</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-server</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+          <version>${version.hbase110}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-hadoop2-compat</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+          <version>${version.hbase110}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-hadoop-compat</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+          <version>${version.hbase110}</version>
+        </dependency>
+      </dependencies>  
+    </profile>
   </profiles>
 
   <build>

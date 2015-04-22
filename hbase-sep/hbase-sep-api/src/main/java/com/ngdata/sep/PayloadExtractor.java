@@ -15,7 +15,7 @@
  */
 package com.ngdata.sep;
 
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
 
 /**
  * Used to extract payloads when constructing {@link SepEvent}s.
@@ -32,6 +32,6 @@ public interface PayloadExtractor {
      * @param keyValue contains a (partial) row mutation which may include payload data
      * @return the extracted payload data, or null if no payload data is included in the supplied {@code KeyValue}
      */
-    public byte[] extractPayload(byte[] tableName, KeyValue keyValue);
+    public byte[] extractPayload(byte[] tableName, Cell keyValue);
 
 }

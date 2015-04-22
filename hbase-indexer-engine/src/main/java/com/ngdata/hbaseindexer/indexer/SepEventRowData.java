@@ -22,6 +22,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.ngdata.sep.SepEvent;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Result;
 
@@ -48,7 +50,7 @@ public class SepEventRowData implements RowData {
     }
 
     @Override
-    public List<KeyValue> getKeyValues() {
+    public List<Cell> getKeyValues() {
         return sepEvent.getKeyValues();
     }
 
@@ -60,10 +62,10 @@ public class SepEventRowData implements RowData {
     @Override
     public Result toResult() {
         
-        List<KeyValue> filteredKeyValues = Lists.newArrayListWithCapacity(sepEvent.getKeyValues().size());
+        List<Cell> filteredKeyValues = Lists.newArrayListWithCapacity(sepEvent.getKeyValues().size());
         
-        for (KeyValue kv : getKeyValues()) {
-            if (!kv.isDelete() && !kv.isDeleteFamily()) {
+        for (Cell kv : getKeyValues()) {
+            if (!CellUtil.isDelete(kv) && !CellUtil.isDeleteFamily(kv)) {
                 filteredKeyValues.add(kv);
             }
         }

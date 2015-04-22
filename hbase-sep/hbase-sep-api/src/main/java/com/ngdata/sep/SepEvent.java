@@ -21,7 +21,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
 
 /**
  * Contains information about a single atomic mutation that has occurred on a row in HBase.
@@ -30,7 +30,7 @@ public class SepEvent {
 
     private final byte[] table;
     private final byte[] row;
-    private final List<KeyValue> keyValues;
+    private final List<Cell> keyValues;
     private final byte[] payload;
 
     /**
@@ -41,7 +41,7 @@ public class SepEvent {
      * @param keyValues The list of updates to the HBase row
      * @param payload Optional additional payload containing data about the data mutation(s)
      */
-    public SepEvent(byte[] table, byte[] row, List<KeyValue> keyValues, byte[] payload) {
+    public SepEvent(byte[] table, byte[] row, List<Cell> keyValues, byte[] payload) {
         this.table = table;
         this.row = row;
         this.payload = payload;
@@ -80,7 +80,7 @@ public class SepEvent {
      * 
      * @return list of key values
      */
-    public List<KeyValue> getKeyValues() {
+    public List<Cell> getKeyValues() {
         return keyValues;
     }
 

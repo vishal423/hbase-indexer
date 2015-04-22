@@ -24,7 +24,14 @@ You can build the full hbase-indexer project as follows:
 
     mvn clean install -DskipTests
 
+**The profile 0.98, 0.96, 0.94 cannot be used at the moment since the code was modified to work with HBase 1.1.0**
+
 The default build is linked to HBase 0.94. In order to build for HBase 0.98,
 run the following command:
 
     mvn clean install -DskipTests -Dhbase.api=0.98
+
+The default build is linked to HBase 0.94. In order to build for HBase 1.1.0,
+run the following command:
+
+    mvn clean install -DskipTests -Dhbase.api=1.1.0

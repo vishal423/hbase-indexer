@@ -17,7 +17,7 @@ package com.ngdata.hbaseindexer.indexer;
 
 import java.util.List;
 
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
 
 /**
@@ -45,7 +45,7 @@ public interface RowData {
      * 
      * @return underlying KeyValues
      */
-    List<KeyValue> getKeyValues();
+    List<Cell> getKeyValues();
     
     
     /**

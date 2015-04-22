@@ -17,7 +17,7 @@ package com.ngdata.hbaseindexer.parse;
 
 import java.util.Collection;
 
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
 
 /**
@@ -72,6 +72,6 @@ public interface ByteArrayExtractor {
      * @param keyValue the {@code KeyValue} to be checked for applicability
      * @return true if the given {@code KeyValue} is applicable, otherwise false
      */
-    boolean isApplicable(KeyValue keyValue);
+    boolean isApplicable(Cell keyValue);
 
 }

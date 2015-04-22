@@ -50,6 +50,8 @@ import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTableInterface;
@@ -299,8 +301,8 @@ public abstract class Indexer {
             for (RowData rowData : rowDataList) {
                 // Check if the event contains changes to relevant key values
                 boolean relevant = false;
-                for (KeyValue kv : rowData.getKeyValues()) {
-                    if (mapper.isRelevantKV(kv) || kv.isDelete()) {
+                for (Cell kv : rowData.getKeyValues()) {
+                    if (mapper.isRelevantKV(kv) || CellUtil.isDelete(kv)) {
                         relevant = true;
                         break;
                     }
@@ -331,15 +333,15 @@ public abstract class Indexer {
 
         @Override
         protected void calculateIndexUpdates(List<RowData> rowDataList, SolrUpdateCollector updateCollector) throws IOException {
-            Map<String, KeyValue> idToKeyValue = calculateUniqueEvents(rowDataList);
-            for (Entry<String, KeyValue> idToKvEntry : idToKeyValue.entrySet()) {
+            Map<String, Cell> idToKeyValue = calculateUniqueEvents(rowDataList);
+            for (Entry<String, Cell> idToKvEntry : idToKeyValue.entrySet()) {
                 String documentId = idToKvEntry.getKey();
 
-                KeyValue keyValue = idToKvEntry.getValue();
-                if (keyValue.isDelete()) {
+                Cell keyValue = idToKvEntry.getValue();
+                if (CellUtil.isDelete(keyValue)) {
                     handleDelete(documentId, keyValue, updateCollector, uniqueKeyFormatter);
                 } else {
-                    Result result = newResult(Collections.singletonList(keyValue));
+                    Result result = newResult(Collections.singletonList((Cell)keyValue));
                     SolrUpdateWriter updateWriter = new RowAndFamilyAddingSolrUpdateWriter(
                             conf.getRowField(),
                             conf.getColumnFamilyField(),
@@ -358,9 +360,9 @@ public abstract class Indexer {
             }
         }
 
-        private void handleDelete(String documentId, KeyValue deleteKeyValue, SolrUpdateCollector updateCollector,
+        private void handleDelete(String documentId, Cell deleteKeyValue, SolrUpdateCollector updateCollector,
                                   UniqueKeyFormatter uniqueKeyFormatter) {
-            byte deleteType = deleteKeyValue.getType();
+            byte deleteType = deleteKeyValue.getTypeByte();
             if (deleteType == KeyValue.Type.DeleteColumn.getCode()) {
                 updateCollector.deleteById(documentId);
             } else if (deleteType == KeyValue.Type.DeleteFamily.getCode()) {
@@ -386,7 +388,7 @@ public abstract class Indexer {
         /**
          * Delete all values for a single column family from Solr.
          */
-        private void deleteFamily(KeyValue deleteKeyValue, SolrUpdateCollector updateCollector,
+        private void deleteFamily(Cell deleteKeyValue, SolrUpdateCollector updateCollector,
                                   UniqueKeyFormatter uniqueKeyFormatter, byte[] tableName) {
             String rowField = conf.getRowField();
             String cfField = conf.getColumnFamilyField();
@@ -413,7 +415,7 @@ public abstract class Indexer {
         /**
          * Delete all values for a single row from Solr.
          */
-        private void deleteRow(KeyValue deleteKeyValue, SolrUpdateCollector updateCollector,
+        private void deleteRow(Cell deleteKeyValue, SolrUpdateCollector updateCollector,
                                UniqueKeyFormatter uniqueKeyFormatter, byte[] tableName) {
             String rowField = conf.getRowField();
             String rowValue = uniqueKeyFormatter.formatRow(deleteKeyValue.getRow());
@@ -429,10 +431,10 @@ public abstract class Indexer {
         /**
          * Calculate a map of Solr document ids to KeyValue, only taking the most recent event for each document id.
          */
-        private Map<String, KeyValue> calculateUniqueEvents(List<RowData> rowDataList) {
-            Map<String, KeyValue> idToKeyValue = Maps.newHashMap();
+        private Map<String, Cell> calculateUniqueEvents(List<RowData> rowDataList) {
+            Map<String, Cell> idToKeyValue = Maps.newHashMap();
             for (RowData rowData : rowDataList) {
-                for (KeyValue kv : rowData.getKeyValues()) {
+                for (Cell kv : rowData.getKeyValues()) {
                     if (mapper.isRelevantKV(kv)) {
                         String id;
                         if (uniqueKeyFormatter instanceof UniqueTableKeyFormatter) {

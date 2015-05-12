@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ngdata</groupId>
   <artifactId>hbase-sep-impl</artifactId>
-  <version>1.6-hbase1.1.0-SNAPSHOT</version>
+  <version>1.6-hbase1.1.0.2.3.0.0-1807</version>
   <name>HBase Side-Effect Processor: impl for HBase 1.1.0</name>
 
   <parent>
@@ -59,13 +59,6 @@
       <groupId>org.apache.hbase</groupId>
       <artifactId>hbase-server</artifactId>
     </dependency>
-                    
-    <dependency>
-      <groupId>org.apache.hbase</groupId>
-      <artifactId>hbase-client</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.hbase</groupId>
@@ -77,20 +70,6 @@
     <dependency>
       <groupId>org.apache.hbase</groupId>
       <artifactId>hbase-server</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.hbase</groupId>
-      <artifactId>hbase-hadoop-compat</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.hbase</groupId>
-      <artifactId>hbase-hadoop2-compat</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

@@ -25,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.solr.cloud.ZkController;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrException.ErrorCode;
+import org.apache.solr.common.cloud.ZkConfigManager;
 import org.apache.solr.common.cloud.ZooKeeperException;
 import org.apache.solr.core.SolrConfig;
 import org.apache.solr.core.SolrResourceLoader;
@@ -58,7 +59,7 @@ public class SolrConfigLoader extends SolrResourceLoader {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonParser jsonParser = objectMapper.getJsonFactory().createJsonParser(data);
             JsonNode collectionNode = objectMapper.readTree(jsonParser);
-            return ZkController.CONFIGS_ZKNODE + "/" + collectionNode.get(ZkController.CONFIGNAME_PROP).getValueAsText();
+            return ZkConfigManager.CONFIGS_ZKNODE + "/" + collectionNode.get(ZkController.CONFIGNAME_PROP).getValueAsText();
         } catch (Exception e) {
             // TODO Better exception handling here
             throw new RuntimeException(e);

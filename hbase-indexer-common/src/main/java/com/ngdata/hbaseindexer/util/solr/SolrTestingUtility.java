@@ -38,6 +38,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.cloud.ZkController;
 import org.apache.solr.common.cloud.OnReconnect;
 import org.apache.solr.common.cloud.SolrZkClient;
+import org.apache.solr.common.cloud.ZkConfigManager;
 import org.apache.zookeeper.KeeperException;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
@@ -196,7 +197,8 @@ public class SolrTestingUtility {
                     @Override
                     public void command() {}
                 });
-        ZkController.uploadConfigDir(zkClient, confDir, confName);
+        ZkConfigManager configManager = new ZkConfigManager(zkClient);
+        configManager.uploadConfigDir(confDir.toPath(), confName);
         zkClient.close();
     }
 

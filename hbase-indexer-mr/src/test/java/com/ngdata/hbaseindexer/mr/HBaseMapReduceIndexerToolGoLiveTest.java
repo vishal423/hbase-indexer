@@ -192,14 +192,14 @@ public class HBaseMapReduceIndexerToolGoLiveTest {
      * @param queryString Solr query string
      * @return list of results from Solr
      */
-    private SolrDocumentList executeSolrQuery(String queryString) throws SolrServerException {
+    private SolrDocumentList executeSolrQuery(String queryString) throws SolrServerException, IOException {
         return executeSolrQuery(COLLECTION1, queryString);
     }
     
     /**
      * Execute a Solr query on a specific collection.
      */
-    private SolrDocumentList executeSolrQuery(CloudSolrClient collection, String queryString) throws SolrServerException {
+    private SolrDocumentList executeSolrQuery(CloudSolrClient collection, String queryString) throws SolrServerException, IOException {
         SolrQuery query = new SolrQuery(queryString).setRows(RECORD_COUNT * 2).addSort("id", ORDER.asc);
         QueryResponse response = collection.query(query);
         return response.getResults();

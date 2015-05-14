@@ -33,6 +33,7 @@ import org.apache.solr.common.cloud.DocCollection;
 import org.apache.solr.common.cloud.Replica;
 import org.apache.solr.common.cloud.Slice;
 import org.apache.solr.common.cloud.SolrZkClient;
+import org.apache.solr.common.cloud.ZkConfigManager;
 import org.apache.solr.common.cloud.ZkCoreNodeProps;
 import org.apache.solr.common.cloud.ZkNodeProps;
 import org.apache.solr.common.cloud.ZkStateReader;
@@ -149,7 +150,7 @@ public final class ForkedZooKeeperInspector {
       configName = props.getStr(ZkController.CONFIGNAME_PROP);
     }
     
-    if (configName != null && !zkClient.exists(ZkController.CONFIGS_ZKNODE + "/" + configName, true)) {
+    if (configName != null && !zkClient.exists(ZkConfigManager.CONFIGS_ZKNODE + "/" + configName, true)) {
       LOG.error("Specified config does not exist in ZooKeeper:" + configName);
       throw new IllegalArgumentException("Specified config does not exist in ZooKeeper:"
         + configName);
@@ -180,7 +181,8 @@ public final class ForkedZooKeeperInspector {
   throws IOException, InterruptedException, KeeperException {
     File dir = Files.createTempDir();
     dir.deleteOnExit();
-    ZkController.downloadConfigDir(zkClient, configName, dir);
+    ZkConfigManager configManager = new ZkConfigManager(zkClient);
+    configManager.downloadConfigDir(configName, dir.toPath());
     File confDir = new File(dir, "conf");
     if (!confDir.isDirectory()) {
       // create a temporary directory with "conf" subdir and mv the config in there.  This is

@@ -25,6 +25,6 @@ public class SecurityUtils {
             final String appname = System.getProperty(LWWW_JAAS_APPNAME, "Client");
             System.setProperty("solr.kerberos.jaas.appname", appname);
             HttpClientUtil.setConfigurer(new Krb5HttpClientConfigurer());
+        }
     }
-  }
 }

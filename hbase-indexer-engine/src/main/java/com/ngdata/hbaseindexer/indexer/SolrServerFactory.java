@@ -39,6 +39,7 @@ public class SolrServerFactory {
     private static final Log log = LogFactory.getLog(SolrServerFactory.class);
 	
     public static SolrClient createCloudSolrServer(Map<String, String> connectionParameters) throws MalformedURLException {
+        SecurityUtils.setSecurityConfig();
         String solrZk = connectionParameters.get(SolrConnectionParams.ZOOKEEPER);
         CloudSolrClient solr = new CloudSolrClient(solrZk);
         String collection = connectionParameters.get(SolrConnectionParams.COLLECTION);

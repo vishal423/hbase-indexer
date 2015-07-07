@@ -19,7 +19,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <properties>
-    <version.solr>5.2.0-SNAPSHOT</version.solr>
+    <version.solr>5.2.1</version.solr>
     <version.guava>11.0.2</version.guava>
     <version.joda-time>1.6</version.joda-time>
     <version.slf4j>1.7.5</version.slf4j>
@@ -974,15 +974,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-
   </repositories>
 
   <pluginRepositories>
@@ -1029,6 +1020,7 @@
           <artifactId>apache-rat-plugin</artifactId>
           <version>0.8</version>
           <configuration>
+            <numUnapprovedLicenses>1</numUnapprovedLicenses>
             <excludes>
               <exclude>**/.*</exclude>
               <exclude>**/target/**</exclude>
@@ -1050,7 +1042,7 @@
               <exclude>**/ForkedAlphaNumericComparator.java</exclude>
               <exclude>**/*.txt</exclude>
               <exclude>**/*.patch</exclude>
-            </excludes>
+            </excludes>                      
           </configuration>
           <executions>
             <execution>

@@ -15,7 +15,6 @@
  */
 package com.ngdata.hbaseindexer.uniquekey;
 
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -27,7 +26,7 @@ public class StringUniqueKeyFormatter extends BaseUniqueKeyFormatter implements 
     private static final HyphenEscapingUniqueKeyFormatter hyphenEscapingFormatter = new HyphenEscapingUniqueKeyFormatter();
 
     @Override
-    public String formatKeyValue(Cell keyValue) {
+    public String formatKeyValue(Object keyValue) {
         return hyphenEscapingFormatter.formatKeyValue(keyValue);
     }
 

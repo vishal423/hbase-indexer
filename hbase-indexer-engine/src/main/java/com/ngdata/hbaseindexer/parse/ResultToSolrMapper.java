@@ -17,7 +17,6 @@ package com.ngdata.hbaseindexer.parse;
 
 import com.ngdata.hbaseindexer.conf.IndexerConf;
 import com.ngdata.hbaseindexer.indexer.Indexer;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 
@@ -31,7 +30,7 @@ public interface ResultToSolrMapper {
      * <p>The implementation should just look at the coordinates (row/family/column), not at the
      * type (put, delete, ...).</p>
      */
-    boolean isRelevantKV(Cell kv);
+    boolean isRelevantKV(Object kv);
 
     /**
      * Creates the Get object used to retrieve the row from HBase with the data needed by this mapper.

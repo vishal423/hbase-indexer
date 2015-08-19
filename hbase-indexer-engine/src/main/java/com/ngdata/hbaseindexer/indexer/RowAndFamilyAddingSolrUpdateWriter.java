@@ -17,18 +17,20 @@ package com.ngdata.hbaseindexer.indexer;
 
 import com.ngdata.hbaseindexer.parse.SolrUpdateWriter;
 import com.ngdata.hbaseindexer.uniquekey.UniqueKeyFormatter;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.solr.common.SolrInputDocument;
+
+import static com.ngdata.sep.impl.HBaseShims.cloneRow;
+import static com.ngdata.sep.impl.HBaseShims.cloneFamily;
 
 /**
  * SolrUpdateWriter decorator that adds row and colument family information to Solr documents if that has been
  * configured.
  */
-public class RowAndFamilyAddingSolrUpdateWriter implements SolrUpdateWriter {
+public class RowAndFamilyAddingSolrUpdateWriter<T> implements SolrUpdateWriter {
 
     private final String rowField;
     private final String columnFamilyField;
-    private final Cell keyValue;
+    private final T keyValue;
     private final UniqueKeyFormatter uniqueKeyFormatter;
     private final SolrUpdateWriter delegateUpdateWriter;
 
@@ -43,7 +45,7 @@ public class RowAndFamilyAddingSolrUpdateWriter implements SolrUpdateWriter {
      */
     public RowAndFamilyAddingSolrUpdateWriter(String rowField, String columnFamilyField,
             UniqueKeyFormatter uniqueKeyFormatter,
-            Cell keyValue,SolrUpdateWriter delegateUpdateWriter) {
+            T keyValue,SolrUpdateWriter delegateUpdateWriter) {
         this.rowField = rowField;
         this.columnFamilyField = columnFamilyField;
         this.uniqueKeyFormatter = uniqueKeyFormatter;
@@ -54,11 +56,11 @@ public class RowAndFamilyAddingSolrUpdateWriter implements SolrUpdateWriter {
     @Override
     public void add(SolrInputDocument solrDocument) {
         if (rowField != null) {
-            solrDocument.addField(rowField, uniqueKeyFormatter.formatRow(keyValue.getRow()));
+            solrDocument.addField(rowField, uniqueKeyFormatter.formatRow(cloneRow(keyValue)));
         }
         
         if (columnFamilyField != null) {
-            solrDocument.addField(columnFamilyField, uniqueKeyFormatter.formatFamily(keyValue.getFamily()));
+            solrDocument.addField(columnFamilyField, uniqueKeyFormatter.formatFamily(cloneFamily(keyValue)));
         }
         
         delegateUpdateWriter.add(solrDocument);

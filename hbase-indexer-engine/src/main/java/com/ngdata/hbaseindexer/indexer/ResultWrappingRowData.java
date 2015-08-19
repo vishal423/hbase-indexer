@@ -17,8 +17,8 @@ package com.ngdata.hbaseindexer.indexer;
 
 import java.util.List;
 
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
+import com.ngdata.sep.impl.HBaseShims;
 
 /**
  * {@code RowData} implementation that directly wraps a Result object that has been
@@ -39,8 +39,8 @@ public class ResultWrappingRowData implements RowData {
     }
 
     @Override
-    public List<Cell> getKeyValues() {
-        return result.listCells();
+    public List<Object> getKeyValues() {
+        return HBaseShims.getKeyValues(result);
     }
 
     @Override

@@ -24,11 +24,70 @@ import org.apache.hadoop.hbase.zookeeper.EmptyWatcher;
 import org.apache.hadoop.hbase.regionserver.wal.HLogUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HBaseShims {
   public static Get newGet() { return new Get(Bytes.toBytes(" ")); }
   public static Result newResult(List<KeyValue> list) { return Result.create(new ArrayList<Cell>(list)); }
+  public static Result newResultFromObject(List<Object> list) { 
+	  List<Cell> listKeys = new ArrayList<Cell>();
+	  for(Object key: list){
+		  listKeys.add((Cell) key);
+	  }
+	  return Result.create(new ArrayList<Cell>(listKeys)); 
+  }  
   public static EmptyWatcher getEmptyWatcherInstance() { return EmptyWatcher.instance; }
   public static String getHLogDirectoryName(String serverName) { return HLogUtil.getHLogDirectoryName(serverName); }
+  public static boolean isDelete(Object keyValue){
+	  KeyValue kv = (KeyValue) keyValue;
+	  return kv.isDelete();
+  }
+  public static boolean isDeleteFamily(Object keyValue){
+	  KeyValue kv = (KeyValue) keyValue;
+	  return kv.isDeleteFamily();
+  }
+  public static List<KeyValue> sort(List<Object> listKeyValues){
+	  List<KeyValue> listKeys = new ArrayList<KeyValue>();
+	  for(Object key : listKeyValues){
+		  listKeys.add((KeyValue) key);
+	  }
+	  Collections.sort(listKeys, KeyValue.COMPARATOR);
+	  return listKeys;
+  }
+  public static byte[] cloneRow(Object keyValue){
+          KeyValue key = (KeyValue) keyValue;
+	  return key.getRow();
+  }
+  public static byte[] cloneFamily(Object keyValue){
+          KeyValue key = (KeyValue) keyValue;
+	  return key.getFamily();
+  }
+  public static byte[] cloneQualifier(Object keyValue){
+          KeyValue key = (KeyValue) keyValue;
+	  return key.getQualifier();
+  }
+  public static byte getTypeByte(Object keyValue){
+	  KeyValue kv = (KeyValue) keyValue;
+	  return kv.getType();
+  }
+  public static boolean matchingFamily(Object keyValue, byte[] columnFamily){
+          KeyValue kv = (KeyValue) keyValue;
+	  return kv.matchingFamily(columnFamily);
+  }
+  
+  public static boolean matchingColumn(Object keyValue, byte[] columnFamily, byte[] columnQualifier){
+          KeyValue kv = (KeyValue) keyValue;
+	  return kv.matchingColumn(columnFamily, columnQualifier);
+  }
+  public static List<Object> getKeyValues(Result result){
+	  List<Object> listKeys = new ArrayList<Object>();
+	  for(KeyValue key: result.list()){
+		  listKeys.add((Object) key);
+	  }
+	  return listKeys;
+  }
+  public static KeyValue castToCellOrKey(Object key){
+	  return (KeyValue) key;
+  }  
 }

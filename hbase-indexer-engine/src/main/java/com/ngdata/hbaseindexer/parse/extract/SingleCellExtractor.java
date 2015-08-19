@@ -20,9 +20,9 @@ import java.util.Collections;
 
 import com.google.common.collect.Lists;
 import com.ngdata.hbaseindexer.parse.ByteArrayExtractor;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Result;
+
+import static com.ngdata.sep.impl.HBaseShims.matchingColumn;
 
 /**
  * Extracts a byte array from a single cell specified by a named column family and qualifier.
@@ -58,8 +58,8 @@ public class SingleCellExtractor implements ByteArrayExtractor {
     }
     
     @Override
-    public boolean isApplicable(Cell keyValue) {
-        return CellUtil.matchingColumn(keyValue, columnFamily, columnQualifier);
+    public boolean isApplicable(Object keyValue) {
+        return matchingColumn(keyValue, columnFamily, columnQualifier);
     }
 
     @Override

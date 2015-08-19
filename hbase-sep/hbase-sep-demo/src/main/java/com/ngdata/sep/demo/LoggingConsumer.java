@@ -27,7 +27,6 @@ import com.ngdata.sep.impl.SepModelImpl;
 import com.ngdata.sep.util.zookeeper.ZkUtil;
 import com.ngdata.sep.util.zookeeper.ZooKeeperItf;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -71,7 +70,7 @@ public class LoggingConsumer {
                 System.out.println("  row = " + Bytes.toString(sepEvent.getRow()));
                 System.out.println("  payload = " + Bytes.toString(sepEvent.getPayload()));
                 System.out.println("  key values = ");
-                for (Cell kv : sepEvent.getKeyValues()) {
+                for (Object kv : sepEvent.getKeyValues()) {
                     System.out.println("    " + kv.toString());
                 }
             }

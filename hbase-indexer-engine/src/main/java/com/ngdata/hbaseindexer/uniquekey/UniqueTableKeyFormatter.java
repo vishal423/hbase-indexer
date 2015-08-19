@@ -15,8 +15,6 @@
  */
 package com.ngdata.hbaseindexer.uniquekey;
 
-import org.apache.hadoop.hbase.Cell;
-
 /**
  * Format row keys into human readable form where the output contains
  * the table name of the row in question
@@ -57,7 +55,7 @@ public interface UniqueTableKeyFormatter extends UniqueKeyFormatter{
      * @param keyValue value to be formatted
      * @param tableName
      */
-    String formatKeyValue(Cell keyValue, byte[] tableName);
+    String formatKeyValue(Object keyValue, byte[] tableName);
 
 
 }

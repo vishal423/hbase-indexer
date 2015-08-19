@@ -16,14 +16,15 @@
 package com.ngdata.hbaseindexer.indexer;
 
 import static com.ngdata.sep.impl.HBaseShims.newResult;
+import static com.ngdata.sep.impl.HBaseShims.isDelete;
+import static com.ngdata.sep.impl.HBaseShims.isDeleteFamily;
+import static com.ngdata.sep.impl.HBaseShims.sort;
 
 import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.ngdata.sep.SepEvent;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Result;
 
@@ -50,7 +51,7 @@ public class SepEventRowData implements RowData {
     }
 
     @Override
-    public List<Cell> getKeyValues() {
+    public <T> List<T> getKeyValues() {
         return sepEvent.getKeyValues();
     }
 
@@ -62,17 +63,16 @@ public class SepEventRowData implements RowData {
     @Override
     public Result toResult() {
         
-        List<Cell> filteredKeyValues = Lists.newArrayListWithCapacity(sepEvent.getKeyValues().size());
+        List<Object> filteredKeyValues = Lists.newArrayListWithCapacity(sepEvent.getKeyValues().size());
         
-        for (Cell kv : getKeyValues()) {
-            if (!CellUtil.isDelete(kv) && !CellUtil.isDeleteFamily(kv)) {
+        for (Object kv : getKeyValues()) {
+            if (!isDelete(kv) && !isDeleteFamily(kv)) {
                 filteredKeyValues.add(kv);
             }
         }
 
         // A Result object requires that the KeyValues are sorted (e.g., it does binary search on them)
-        Collections.sort(filteredKeyValues, KeyValue.COMPARATOR);
-        return newResult(filteredKeyValues);
+        return newResult(sort(filteredKeyValues));
     }
 
 }

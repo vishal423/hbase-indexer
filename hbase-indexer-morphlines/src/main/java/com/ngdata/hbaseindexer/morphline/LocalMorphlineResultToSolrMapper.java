@@ -24,7 +24,6 @@ import java.util.NavigableSet;
 import java.util.TreeMap;
 
 import com.ngdata.hbaseindexer.ConfigureUtil;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -187,7 +186,7 @@ final class LocalMorphlineResultToSolrMapper implements ResultToSolrMapper, Conf
     }
 
     @Override
-    public boolean isRelevantKV(Cell kv) {
+    public boolean isRelevantKV(Object kv) {
         if (isSafeMode) {
             return true;
         }

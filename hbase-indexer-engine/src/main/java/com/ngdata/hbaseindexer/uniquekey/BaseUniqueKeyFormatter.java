@@ -21,9 +21,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.KeyValue;
+import static com.ngdata.sep.impl.HBaseShims.cloneFamily;
+import static com.ngdata.sep.impl.HBaseShims.cloneRow;
+import static com.ngdata.sep.impl.HBaseShims.cloneQualifier;
 
 public abstract class BaseUniqueKeyFormatter implements UniqueKeyFormatter {
 
@@ -60,9 +61,9 @@ public abstract class BaseUniqueKeyFormatter implements UniqueKeyFormatter {
     }
 
     @Override
-    public String formatKeyValue(Cell keyValue) {
-        return JOINER.join(encodeAsString(CellUtil.cloneRow(keyValue)), encodeAsString(CellUtil.cloneFamily(keyValue)),
-                encodeAsString(CellUtil.cloneQualifier(keyValue)));
+    public String formatKeyValue(Object keyValue) {
+        return JOINER.join(encodeAsString(cloneRow(keyValue)), encodeAsString(cloneFamily(keyValue)),
+                encodeAsString(cloneQualifier(keyValue)));
     }
 
     @Override

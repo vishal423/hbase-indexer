@@ -25,12 +25,13 @@
   <parent>
     <groupId>com.ngdata</groupId>
     <artifactId>hbase-indexer</artifactId>
-    <version>1.6-hbase1.1-hdp23-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <properties>
     <hadoop.version>${version.hadoop.mr1.hbase98}</hadoop.version>
+    <hadoop.mapr.version>${version.hadoop.mr1.hbase98mapr}</hadoop.mapr.version>
   </properties>
 
   <dependencies>
@@ -48,10 +49,6 @@
           <artifactId>jetty-servlet</artifactId> 
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.cloudera.search</groupId>
-      <artifactId>search-mr</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -104,9 +101,10 @@
       <id>yarn</id>
       <properties>
         <hadoop.version>${version.hadoop.hbase98}</hadoop.version>
+        <hadoop.mapr.version>${version.hadoop.hbase98mapr}</hadoop.mapr.version>
       </properties>
     </profile>
-    
+
     <profile>
       <id>0.94</id>
       <activation>
@@ -121,6 +119,10 @@
 
       <dependencies>
         <dependency>
+          <groupId>com.cloudera.search</groupId>
+          <artifactId>search-mr</artifactId>
+        </dependency>
+        <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-core</artifactId>
         </dependency>
@@ -128,7 +130,6 @@
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase</artifactId>
         </dependency>
-
         <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase</artifactId>
@@ -171,6 +172,10 @@
 
       <dependencies>
         <dependency>
+          <groupId>com.cloudera.search</groupId>
+          <artifactId>search-mr</artifactId>
+        </dependency>
+        <dependency>
           <groupId>org.apache.hbase</groupId>
           <artifactId>hbase-server</artifactId>
           <type>test-jar</type>
@@ -210,7 +215,7 @@
 
       </dependencies>  
     </profile>
-    
+
     <profile>
       <id>0.98</id>
       <activation>
@@ -225,6 +230,10 @@
       </properties>
 
       <dependencies>
+        <dependency>
+          <groupId>com.cloudera.search</groupId>
+          <artifactId>search-mr</artifactId>
+        </dependency>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-client</artifactId>
@@ -261,7 +270,86 @@
         </dependency>
       </dependencies>  
     </profile>
-    
+
+    <profile>
+      <id>0.98-mapr</id>
+      <activation>
+        <property>
+          <name>hbase.api</name>
+          <value>0.98-mapr</value>
+        </property>
+      </activation>
+
+      <properties>
+        <log4j.properties.file>log4j-0.98-mapr.properties</log4j.properties.file>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.zookeeper</groupId>
+          <artifactId>zookeeper</artifactId>
+          <version>${version.zookeeper.mapr}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>com.sun.jdmk</groupId>
+              <artifactId>jmxtools</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.jmx</groupId>
+              <artifactId>jmxri</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>javax.mail</groupId>
+              <artifactId>mail</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>javax.jms</groupId>
+              <artifactId>jms</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.solr</groupId>
+          <artifactId>solr-map-reduce</artifactId>
+          <version>${version.solr}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-client</artifactId>
+          <version>${hadoop.mapr.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-minicluster</artifactId>
+          <version>${hadoop.mapr.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-server</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+          <version>${version.hbase98mapr}</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-hadoop2-compat</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+          <version>${version.hbase98mapr}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-hadoop-compat</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+          <version>${version.hbase98mapr}</version>
+        </dependency>
+      </dependencies>  
+    </profile>    
+
     <profile>
       <id>1.1.0</id>
       <activation>
@@ -276,6 +364,10 @@
       </properties>
 
       <dependencies>
+        <dependency>
+          <groupId>com.cloudera.search</groupId>
+          <artifactId>search-mr</artifactId>
+        </dependency>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-client</artifactId>

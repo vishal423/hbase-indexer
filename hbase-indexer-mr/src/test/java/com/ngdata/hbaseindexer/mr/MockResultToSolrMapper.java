@@ -18,7 +18,6 @@ package com.ngdata.hbaseindexer.mr;
 import com.ngdata.hbaseindexer.parse.ResultToSolrMapper;
 import com.ngdata.hbaseindexer.parse.SolrUpdateWriter;
 import com.ngdata.sep.impl.HBaseShims;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -30,7 +29,7 @@ import org.apache.solr.common.SolrInputDocument;
 public class MockResultToSolrMapper implements ResultToSolrMapper {
 
     @Override
-    public boolean isRelevantKV(Cell kv) {
+    public boolean isRelevantKV(Object kv) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

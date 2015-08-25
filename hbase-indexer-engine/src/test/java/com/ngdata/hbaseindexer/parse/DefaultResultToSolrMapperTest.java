@@ -15,7 +15,7 @@
  */
 package com.ngdata.hbaseindexer.parse;
 
-import static com.ngdata.sep.impl.HBaseShims.newResult;
+import static com.ngdata.sep.impl.HBaseShims.newResultFromObject;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,7 +38,6 @@ import com.google.common.collect.Sets;
 import com.ngdata.hbaseindexer.conf.DocumentExtractDefinition;
 import com.ngdata.hbaseindexer.conf.FieldDefinition;
 import com.ngdata.hbaseindexer.conf.FieldDefinition.ValueSource;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
@@ -81,9 +80,9 @@ public class DefaultResultToSolrMapperTest {
         DefaultResultToSolrMapper resultMapper = new DefaultResultToSolrMapper("index-name", Lists.newArrayList(fieldDefA, fieldDefB),
                 Collections.<DocumentExtractDefinition> emptyList());
 
-        Cell kvA = new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes(42));
-        Cell kvB = new KeyValue(ROW, COLUMN_FAMILY_B, QUALIFIER_B, Bytes.toBytes("dummy value"));
-        Result result = newResult(Lists.newArrayList(kvA, kvB));
+        KeyValue kvA = new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes(42));
+        KeyValue kvB = new KeyValue(ROW, COLUMN_FAMILY_B, QUALIFIER_B, Bytes.toBytes("dummy value"));
+        Result result = newResultFromObject(Lists.newArrayList((Object)kvA, (Object)kvB));
 
         resultMapper.map(result, solrUpdateWriter);
         verify(solrUpdateWriter).add(solrInputDocCaptor.capture());
@@ -174,7 +173,7 @@ public class DefaultResultToSolrMapperTest {
                 Lists.newArrayList(new FieldDefinition("fieldname", "cfA:qualifierA", ValueSource.VALUE, "int")),
                         Collections.<DocumentExtractDefinition>emptyList());
         
-        Result result = newResult(Lists.newArrayList((Cell) new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
+        Result result = newResultFromObject(Lists.newArrayList((Object) new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
         
         assertTrue(resultToSolrMapper.containsRequiredData(result));
     }
@@ -186,7 +185,7 @@ public class DefaultResultToSolrMapperTest {
                 Lists.newArrayList(new FieldDefinition("fieldname", "cfA:quali*", ValueSource.VALUE, "int")),
                         Collections.<DocumentExtractDefinition>emptyList());
         
-        Result result = newResult(Lists.newArrayList((Cell) new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
+        Result result = newResultFromObject(Lists.newArrayList((Object) new KeyValue(ROW, COLUMN_FAMILY_A, QUALIFIER_A, Bytes.toBytes("value"))));
         
         assertFalse(resultToSolrMapper.containsRequiredData(result));
     }

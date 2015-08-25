@@ -17,7 +17,6 @@ package com.ngdata.hbaseindexer.conf;
 
 import com.ngdata.hbaseindexer.parse.ResultToSolrMapper;
 import com.ngdata.hbaseindexer.parse.SolrUpdateWriter;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 
@@ -27,7 +26,7 @@ import org.apache.hadoop.hbase.client.Result;
 public class TestResultToSolrMapper implements ResultToSolrMapper {
 
     @Override
-    public boolean isRelevantKV(Cell kv) {
+    public boolean isRelevantKV(Object kv) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

@@ -68,6 +68,8 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 
+import static com.ngdata.sep.impl.HBaseShims.cloneRow;
+
 /**
  * SepConsumer consumes the events for a certain SEP subscription and dispatches
  * them to an EventListener (optionally multi-threaded). Multiple SepConsumer's
@@ -251,7 +253,7 @@ public class SepConsumer extends BaseHRegionServer {
             for (final ByteBuffer rowKeyBuffer : keyValuesPerRowKey.keySet()) {
                 final List<Cell> keyValues = (List<Cell>)keyValuesPerRowKey.get(rowKeyBuffer);
                 
-                final SepEvent sepEvent = new SepEvent(tableName.toBytes(), (keyValues.get(0)).getRow(), keyValues,
+                final SepEvent<Cell> sepEvent = new SepEvent<Cell>(tableName.toBytes(), cloneRow(keyValues.get(0)), keyValues,
                         payloadPerRowKey.get(rowKeyBuffer));
                 eventExecutor.scheduleSepEvent(sepEvent);
                 lastProcessedTimestamp = Math.max(lastProcessedTimestamp, entry.getKey().getWriteTime());

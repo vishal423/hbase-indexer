@@ -56,6 +56,7 @@ public class BasePayloadExtractor implements PayloadExtractor {
      * <p>
      * Data will only be extracted if it matches the configured table, column family, and column qualifiers. If no
      * payload data can be extracted, null will be returned.
+     * @param <T>
      * 
      * @param tableName table to which the {@code KeyValue} is being applied
      * @param keyValue contains a (partial) row mutation which may include payload data
@@ -63,9 +64,10 @@ public class BasePayloadExtractor implements PayloadExtractor {
      */
     
     @Override
-    public byte[] extractPayload(byte[] tableName, Cell keyValue) {
-        if (Bytes.equals(this.tableName, tableName) && CellUtil.matchingColumn(keyValue, columnFamily, columnQualifier)) {
-            return keyValue.getValueArray();
+    public <T> byte[] extractPayload(byte[] tableName, T keyValue) {
+    	Cell cell = (Cell) keyValue;
+        if (Bytes.equals(this.tableName, tableName) && CellUtil.matchingColumn(cell, columnFamily, columnQualifier)) {
+            return cell.getValueArray();
         } else {
             return null;
         }

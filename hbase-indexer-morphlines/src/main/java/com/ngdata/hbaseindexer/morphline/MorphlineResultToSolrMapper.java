@@ -19,7 +19,6 @@ import java.util.Map;
 
 import com.ngdata.hbaseindexer.parse.SolrUpdateWriter;
 
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 
@@ -131,7 +130,7 @@ public final class MorphlineResultToSolrMapper implements ResultToSolrMapper, Co
     }
 
     @Override
-    public boolean isRelevantKV(Cell kv) {
+    public boolean isRelevantKV(Object kv) {
         return localMorphlineMapper.get().isRelevantKV(kv);
     }
 

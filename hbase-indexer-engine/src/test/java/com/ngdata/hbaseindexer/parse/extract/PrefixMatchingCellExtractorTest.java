@@ -21,14 +21,13 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
 import com.ngdata.hbaseindexer.parse.ByteArrayExtractor;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.ngdata.sep.impl.HBaseShims.newResult;
+import static com.ngdata.sep.impl.HBaseShims.newResultFromObject;
 
 public class PrefixMatchingCellExtractorTest {
 
@@ -50,7 +49,7 @@ public class PrefixMatchingCellExtractorTest {
         KeyValue kvA2 = new KeyValue(ROW, COLFAM_A, QUALIFIER_A2, VALUE_A2);
         KeyValue kvB1 = new KeyValue(ROW, COLFAM_B, QUALIFIER_B1, VALUE_B1);
 
-        result = newResult(Lists.newArrayList((Cell) kvA1, (Cell) kvA2, (Cell) kvB1));
+        result = newResultFromObject(Lists.newArrayList((Object) kvA1, (Object) kvA2, (Object) kvB1));
     }
 
     @Test

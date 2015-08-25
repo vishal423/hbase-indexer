@@ -23,7 +23,7 @@
   <parent>
     <groupId>com.ngdata</groupId>
     <artifactId>hbase-indexer</artifactId>
-    <version>1.6-hbase1.1-hdp23-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -73,6 +73,20 @@
 
       <modules>
         <module>hbase-sep-impl-0.98</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>0.98-mapr</id>
+      <activation>
+        <property>
+          <name>hbase.api</name>
+          <value>0.98-mapr</value>
+        </property>
+      </activation>
+
+      <modules>
+        <module>hbase-sep-impl-0.98-mapr</module>
       </modules>
     </profile>
 

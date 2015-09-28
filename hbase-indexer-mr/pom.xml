@@ -416,31 +416,6 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-
-      <!--plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/hadoop-job.xml</descriptor>
-          </descriptors>
-          <archive>
-            <manifest>
-              <mainClass>com.ngdata.hbaseindexer.mr.HBaseMapReduceIndexerTool</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -468,7 +443,6 @@
 
               <artifactSet>
                 <excludes>
-                  <!--exclude>org.apache.hadoop:*</exclude-->
                   <exclude>org.slf4j:slf4j-log4j12</exclude>
                   <exclude>tomcat:jasper-compiler</exclude>
                   <exclude>tomcat:jasper-runtime</exclude>

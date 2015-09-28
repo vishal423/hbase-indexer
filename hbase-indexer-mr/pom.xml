@@ -16,7 +16,9 @@
  * limitations under the License.
  */
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hbase-indexer-mr</artifactId>
@@ -46,7 +48,7 @@
         <exclusion>
           <!-- CDH-16644: no need for startReportingMetricsToHTTP command from kite-morphlines-metrics-servlets -->
           <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-servlet</artifactId> 
+          <artifactId>jetty-servlet</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -93,7 +95,7 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-servlet</artifactId>
-    </dependency>    
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -213,7 +215,7 @@
           <scope>test</scope>
         </dependency>
 
-      </dependencies>  
+      </dependencies>
     </profile>
 
     <profile>
@@ -268,7 +270,7 @@
           <scope>test</scope>
           <version>${version.hbase98}</version>
         </dependency>
-      </dependencies>  
+      </dependencies>
     </profile>
 
     <profile>
@@ -347,8 +349,8 @@
           <scope>test</scope>
           <version>${version.hbase98mapr}</version>
         </dependency>
-      </dependencies>  
-    </profile>    
+      </dependencies>
+    </profile>
 
     <profile>
       <id>1.1.0</id>
@@ -367,6 +369,12 @@
         <dependency>
           <groupId>com.cloudera.search</groupId>
           <artifactId>search-mr</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.lucene</groupId>
+              <artifactId>lucene-codecs</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
@@ -387,7 +395,7 @@
           <scope>test</scope>
           <version>${version.hbase110}</version>
         </dependency>
-      </dependencies>  
+      </dependencies>
     </profile>
   </profiles>
 
@@ -402,32 +410,72 @@
             <MALLOC_ARENA_MAX>4</MALLOC_ARENA_MAX>
           </environmentVariables>
           <systemPropertyVariables>
-            <log4j.configuration>file:${project.build.testOutputDirectory}/${log4j.properties.file}</log4j.configuration>
+            <log4j.configuration>
+              file:${project.build.testOutputDirectory}/${log4j.properties.file}
+            </log4j.configuration>
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/hadoop-job.xml</descriptor>
-          </descriptors>
-          <archive>
-            <manifest>
-              <mainClass>com.ngdata.hbaseindexer.mr.HBaseMapReduceIndexerTool</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.4.1</version>
         <executions>
           <execution>
             <id>make-assembly</id>
             <phase>package</phase>
             <goals>
-              <goal>single</goal>
+              <goal>shade</goal>
             </goals>
+            <configuration>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>job</shadedClassifierName>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+
+              <artifactSet>
+                <excludes>
+                  <exclude>org.slf4j:slf4j-log4j12</exclude>
+                  <exclude>tomcat:jasper-compiler</exclude>
+                  <exclude>tomcat:jasper-runtime</exclude>
+                </excludes>
+              </artifactSet>
+
+              <relocations>
+                <relocation>
+                  <pattern>org.apache.http</pattern>
+                  <shadedPattern>shaded.apache.http</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.solr</pattern>
+                  <shadedPattern>shaded.apache.solr</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.codehaus.jackson</pattern>
+                  <shadedPattern>shaded.codehaus.jackson</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.objectweb.asm</pattern>
+                  <shadedPattern>shaded.objectweb.asm</shadedPattern>
+                </relocation>
+              </relocations>
+              <transformers>
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>com.ngdata.hbaseindexer.mr.HBaseMapReduceIndexerTool</Main-Class>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
           </execution>
         </executions>
       </plugin>

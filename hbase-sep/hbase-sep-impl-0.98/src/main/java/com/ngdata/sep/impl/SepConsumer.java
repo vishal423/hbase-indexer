@@ -325,7 +325,7 @@ public class SepConsumer extends BaseHRegionServer {
 
                 Meter tableMeter = getTableMeter(tableNameAsStr);
                 tableMeter.mark();
-              
+
                 final SepEvent sepEvent = new SepEvent(tableName.toBytes(), keyValues.get(0).getRow(), keyValues,
                         payloadPerRowKey.get(rowKeyBuffer));
                 eventExecutor.scheduleSepEvent(sepEvent);

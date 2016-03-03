@@ -136,8 +136,6 @@ public class Main implements StateWatchingZooKeeper.ExpiredZkSessionListener {
                 indexerProcessRegistry, tablePool, conf);
 
         indexerSupervisor.init();
-        startHttpServer();
-
     }
 
     private void startHttpServer() throws Exception {

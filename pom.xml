@@ -230,6 +230,14 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -246,6 +254,14 @@
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
             <!-- nothing in solr-cell is using this -->
+          </exclusion>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1226,6 +1242,7 @@
 
     <pluginManagement>
       <plugins>
+        <!--
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
@@ -1265,6 +1282,7 @@
             </execution>
           </executions>
         </plugin>
+        -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>

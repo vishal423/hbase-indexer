@@ -50,6 +50,10 @@ import static org.apache.zookeeper.ZooKeeper.States.CONNECTED;
 public class StateWatchingZooKeeper extends ZooKeeperImpl {
     private Log log = LogFactory.getLog(getClass());
 
+    public interface ExpiredZkSessionListener {
+        void onSessionExpired();
+    }
+
     private int requestedSessionTimeout;
 
     private int sessionTimeout;
@@ -70,14 +74,14 @@ public class StateWatchingZooKeeper extends ZooKeeperImpl {
     private Runnable endProcessHook;
 
     public StateWatchingZooKeeper(String connectString, int sessionTimeout) throws IOException {
-        this(connectString, sessionTimeout, sessionTimeout);
+        this(connectString, sessionTimeout, sessionTimeout,  null);
     }
 
-    public StateWatchingZooKeeper(String connectString, int sessionTimeout, int startupTimeOut) throws IOException {
+    public StateWatchingZooKeeper(String connectString, int sessionTimeout, int startupTimeOut, ExpiredZkSessionListener expiredZkSessionListener) throws IOException {
         this.requestedSessionTimeout = sessionTimeout;
         this.sessionTimeout = sessionTimeout;
 
-        ZooKeeper zk = new ZooKeeper(connectString, sessionTimeout, new MyWatcher());
+        ZooKeeper zk = new ZooKeeper(connectString, sessionTimeout, new MyWatcher(expiredZkSessionListener));
         setDelegate(zk);
         ready = true;
 
@@ -146,7 +150,12 @@ public class StateWatchingZooKeeper extends ZooKeeperImpl {
 
     private class MyWatcher implements Watcher {
 
-        @Override
+        private ExpiredZkSessionListener expiredZkSessionListener;
+
+        MyWatcher(ExpiredZkSessionListener expiredZkSessionListener) {
+          this.expiredZkSessionListener = expiredZkSessionListener;
+        }
+
         public void process(WatchedEvent event) {
             if (stopping) {
                 return;
@@ -156,7 +165,13 @@ public class StateWatchingZooKeeper extends ZooKeeperImpl {
 
             try {
                 if (event.getState() == Expired) {
-                    endProcess("ZooKeeper session expired, shutting down.");
+                    if (expiredZkSessionListener != null) {
+                        stopping = true;
+                        expiredZkSessionListener.onSessionExpired();
+                        return; // return immediately as this class will be reset
+                    } else {
+                        endProcess("ZooKeeper session expired, shutting down.");
+                    }
                 } else if (event.getState() == Disconnected) {
                     log.warn("Disconnected from ZooKeeper");
                     connected = false;
@@ -218,7 +233,6 @@ public class StateWatchingZooKeeper extends ZooKeeperImpl {
 
         private long startNotConnected;
 
-        @Override
         public void run() {
             startNotConnected = System.currentTimeMillis();
 

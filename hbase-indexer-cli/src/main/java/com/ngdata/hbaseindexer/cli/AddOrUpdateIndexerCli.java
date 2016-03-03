@@ -323,6 +323,17 @@ public abstract class AddOrUpdateIndexerCli extends BaseIndexCli {
             if (SolrConnectionParamUtil.getShards(connectionParams).size() == 0) {
                 throw new CliException("ERROR: You need at least one shard when using solr classic");
             }
+        } else if (connectionParams.get(SolrConnectionParams.MODE).equals("fusion")) {
+
+          if (!connectionParams.containsKey(SolrConnectionParams.FUSION_PIPELINE)) {
+            throw new CliException(
+                    "ERROR: no -cp fusion.pipeline specified (this is required when solr.mode=fusion)");
+          }
+
+          if (!connectionParams.containsKey(SolrConnectionParams.FUSION_SOLRPROXY)) {
+            throw new CliException(
+                    "ERROR: no -cp fusion.solrproxy specified (this is required when solr.mode=fusion)");
+          }
 
         } else {
             throw new CliException("ERROR: solr.mode should be 'cloud' or 'classic'. Invalid value: " +
@@ -352,7 +363,12 @@ public abstract class AddOrUpdateIndexerCli extends BaseIndexCli {
                 SolrConnectionParams.SHARDER_TYPE,
                 SolrConnectionParams.ZOOKEEPER,
                 SolrConnectionParams.MAX_CONNECTIONS,
-                SolrConnectionParams.MAX_CONNECTIONS_PER_HOST
+                SolrConnectionParams.MAX_CONNECTIONS_PER_HOST,
+                SolrConnectionParams.FUSION_PIPELINE,
+                SolrConnectionParams.FUSION_SOLRPROXY,
+                SolrConnectionParams.FUSION_USER,
+                SolrConnectionParams.FUSION_PASS,
+                SolrConnectionParams.FUSION_REALM
         );
         if (fixed.contains(param)) {
             return true;

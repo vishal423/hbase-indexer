@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -69,6 +70,10 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Meter;
+import com.yammer.metrics.core.MetricName;
+
 /**
  * SepConsumer consumes the events for a certain SEP subscription and dispatches
  * them to an EventListener (optionally multi-threaded). Multiple SepConsumer's
@@ -94,6 +99,12 @@ public class SepConsumer extends BaseHRegionServer {
     private List<ThreadPoolExecutor> executors;
     boolean running = false;
     private Log log = LogFactory.getLog(getClass());
+
+    private Meter hlogBatches;
+    private Meter hlogEntries;
+    private Meter sepEvents;
+    private Meter skippedEntries;
+    private Map<String,Meter> tableEvents = new HashMap<String,Meter>();
 
     /**
      * @param subscriptionTimestamp timestamp of when the index subscription became active (or more accurately, not
@@ -129,6 +140,26 @@ public class SepConsumer extends BaseHRegionServer {
         this.sepMetrics = new SepMetrics(subscriptionId);
         this.payloadExtractor = payloadExtractor;
         this.executors = Lists.newArrayListWithCapacity(threadCnt);
+
+        hlogEntries = Metrics.newMeter(
+                new MetricName("hbaseindexer", getClass().getSimpleName(), "HLog Entries Received", subscriptionId),
+                "HLog entries received from WAL",
+                TimeUnit.SECONDS);
+
+        hlogBatches = Metrics.newMeter(
+                new MetricName("hbaseindexer", getClass().getSimpleName(), "HLog Batches Received", subscriptionId),
+                "HLog batches received from WAL",
+                TimeUnit.SECONDS);
+
+        skippedEntries = Metrics.newMeter(
+                new MetricName("hbaseindexer", getClass().getSimpleName(), "HLog Entries Skipped", subscriptionId),
+                "HLog entries skipped b/c of old write time",
+                TimeUnit.SECONDS);
+
+        sepEvents = Metrics.newMeter(
+                new MetricName("hbaseindexer", getClass().getSimpleName(), "SEP Events", subscriptionId),
+                "SEP Events raised ("+hostName+")",
+                TimeUnit.SECONDS);
 
         InetSocketAddress initialIsa = new InetSocketAddress(hostName, 0);
         if (initialIsa.getAddress() == null) {
@@ -205,9 +236,27 @@ public class SepConsumer extends BaseHRegionServer {
         return running;
     }
 
+    protected Meter getTableMeter(String table) {
+        Meter meter = null;
+        synchronized (tableEvents) {
+            meter = tableEvents.get(table);
+            if (meter == null) {
+                meter = Metrics.newMeter(
+                        new MetricName("hbaseindexer", getClass().getSimpleName(), "SEP Events ("+table+")", subscriptionId),
+                        "SEP Events from "+table,
+                        TimeUnit.SECONDS);
+                tableEvents.put(table, meter);
+            }
+        }
+        return meter;
+    }
+
     @Override
     public AdminProtos.ReplicateWALEntryResponse replicateWALEntry(final RpcController controller,
                                   final AdminProtos.ReplicateWALEntryRequest request) throws ServiceException {
+
+      hlogBatches.mark();
+
       try {
 
         // TODO Recording of last processed timestamp won't work if two batches of log entries are sent out of order
@@ -218,9 +267,28 @@ public class SepConsumer extends BaseHRegionServer {
         List<AdminProtos.WALEntry> entries = request.getEntryList();
         CellScanner cells = ((PayloadCarryingRpcController)controller).cellScanner();
 
+        boolean isDebugEnabled = log.isDebugEnabled();
+        log.info("Processing batch of "+entries.size()+" WAL entries using subscriptionTimestamp: "+subscriptionTimestamp);
+        int entryIndex = -1; // zero-based entry index
         for (final AdminProtos.WALEntry entry : entries) {
-            TableName tableName = (entry.getKey().getWriteTime() < subscriptionTimestamp) ? null :
-                                  TableName.valueOf(entry.getKey().getTableName().toByteArray());
+            ++entryIndex;
+
+            hlogEntries.mark();
+
+            boolean skip = false;
+            TableName tableName = TableName.valueOf(entry.getKey().getTableName().toByteArray());
+            String tableNameAsStr = tableName.getNameAsString();
+            long writeTime = entry.getKey().getWriteTime();
+            if (writeTime < subscriptionTimestamp) {
+                skip = true;
+                skippedEntries.mark();
+
+                if (isDebugEnabled) {
+                    log.debug("Skipping entry "+entryIndex+" with key "+entry.getKey()+" on table "+tableNameAsStr+
+                            " due to writeTime("+writeTime+") < "+subscriptionTimestamp);
+                }
+            }
+
             Multimap<ByteBuffer, KeyValue> keyValuesPerRowKey = ArrayListMultimap.create();
             final Map<ByteBuffer, byte[]> payloadPerRowKey = Maps.newHashMap();
             int count = entry.getAssociatedCellCount();
@@ -229,13 +297,16 @@ public class SepConsumer extends BaseHRegionServer {
                     throw new ArrayIndexOutOfBoundsException("Expected=" + count + ", index=" + i);
                 }
 
+                Cell cell = cells.current();
+                ByteBuffer rowKey = ByteBuffer.wrap(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
+
                 // this signals to us that we simply need to skip over count of cells
-                if (tableName == null) {
+                if (skip) {
+                    if (isDebugEnabled)
+                        log.debug("Skipping row with key "+Bytes.toStringBinary(rowKey)+" for table "+tableNameAsStr);
                     continue;
                 }
 
-                Cell cell = cells.current();
-                ByteBuffer rowKey = ByteBuffer.wrap(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
                 byte[] payload;
                 KeyValue kv = KeyValueUtil.ensureKeyValue(cell);
                 if (payloadExtractor != null && (payload = payloadExtractor.extractPayload(tableName.toBytes(), kv)) != null) {
@@ -252,9 +323,13 @@ public class SepConsumer extends BaseHRegionServer {
             for (final ByteBuffer rowKeyBuffer : keyValuesPerRowKey.keySet()) {
                 final List<KeyValue> keyValues = (List<KeyValue>)keyValuesPerRowKey.get(rowKeyBuffer);
 
+                Meter tableMeter = getTableMeter(tableNameAsStr);
+                tableMeter.mark();
+              
                 final SepEvent sepEvent = new SepEvent(tableName.toBytes(), keyValues.get(0).getRow(), keyValues,
                         payloadPerRowKey.get(rowKeyBuffer));
                 eventExecutor.scheduleSepEvent(sepEvent);
+                sepEvents.mark();
                 lastProcessedTimestamp = Math.max(lastProcessedTimestamp, entry.getKey().getWriteTime());
             }
 

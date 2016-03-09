@@ -40,7 +40,7 @@
     <version.hadoop>2.0.0-cdh4.4.0</version.hadoop>
     <version.zookeeper>3.4.6</version.zookeeper>
     <version.zookeeper.mapr>3.4.5-mapr-1503</version.zookeeper.mapr>
-    <version.jackson>1.8.8</version.jackson>
+    <version.jackson>1.9.13</version.jackson>
     <version.httpclient>4.4.1</version.httpclient>
     <version.kite>0.13.0</version.kite>
     <version.search>1.2.0</version.search>

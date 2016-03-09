@@ -1,3 +1,7 @@
 <?xml version="1.0"?>
 <configuration>
+  <property>
+    <name>hbaseindexer.zookeeper.session.timeout</name>
+    <value>30000</value>
+  </property>
 </configuration>

@@ -52,4 +52,9 @@ public class SolrConnectionParams {
      */
     public static final String MAX_CONNECTIONS = "solr.conn.max";
 
+    public static final String FUSION_PIPELINE = "fusion.pipeline";
+    public static final String FUSION_SOLRPROXY = "fusion.solrproxy";
+    public static final String FUSION_USER = "fusion.user";
+    public static final String FUSION_PASS = "fusion.pass";
+    public static final String FUSION_REALM = "fusion.realm";
 }

@@ -43,7 +43,12 @@ public class ReplicationStatusCli {
                 .acceptsAll(ImmutableList.of("z"), "ZooKeeper connection string, defaults to localhost")
                 .withRequiredArg().ofType(String.class)
                 .defaultsTo("localhost");
-        
+
+      OptionSpec<String> znodeOption = parser
+              .acceptsAll(ImmutableList.of("hbase-znode"), "Root znode for finding the HBase master name")
+              .withRequiredArg().ofType(String.class)
+              .defaultsTo("/hbase/master");
+
         OptionSpec<Integer> hbaseMasterPortOption = parser
                 .acceptsAll(ImmutableList.of("hbase-master-port"), "HBase Master web ui port number")
                 .withRequiredArg().ofType(Integer.class)
@@ -64,8 +69,8 @@ public class ReplicationStatusCli {
 
         System.out.println("Connecting to Zookeeper " + zkConnectString + "...");
         ZooKeeperItf zk = ZkUtil.connect(zkConnectString, 30000);
-
-        ReplicationStatusRetriever retriever = new ReplicationStatusRetriever(zk, options.valueOf(hbaseMasterPortOption));
+        String hbaseZnode = options.valueOf(znodeOption);
+        ReplicationStatusRetriever retriever = new ReplicationStatusRetriever(zk, options.valueOf(hbaseMasterPortOption), hbaseZnode);
         ReplicationStatus replicationStatus = retriever.collectStatusFromZooKeepeer();
 
         if (enableJmx) {

@@ -74,13 +74,17 @@ public class ReplicationStatusRetriever {
     public static final int HBASE_JMX_PORT = 10102;
 
     public ReplicationStatusRetriever(ZooKeeperItf zk, int hbaseMasterPort) throws InterruptedException, IOException, KeeperException {
-        this.zk = zk;
-        
-        Configuration conf = getHBaseConf(zk, hbaseMasterPort);
+        this(zk, hbaseMasterPort, "/hbase/master");
+    }
 
-        if (!"true".equalsIgnoreCase(conf.get("hbase.replication"))) {
-            throw new RuntimeException("HBase replication is not enabled.");
-        }
+    public ReplicationStatusRetriever(ZooKeeperItf zk, int hbaseMasterPort, String znodePath) throws InterruptedException, IOException, KeeperException {
+        this.zk = zk;
+
+        Configuration conf = getHBaseConf(zk, hbaseMasterPort, znodePath);
+
+        //if (!"true".equalsIgnoreCase(conf.get("hbase.replication"))) {
+            //throw new RuntimeException("HBase replication is not enabled.");
+        //}
 
         
         fileSystem = FileSystem.get(conf);
@@ -88,10 +92,10 @@ public class ReplicationStatusRetriever {
         hbaseOldLogDir = new Path(hbaseRootDir, HConstants.HREGION_OLDLOGDIR_NAME);
     }
 
-    private Configuration getHBaseConf(ZooKeeperItf zk, int hbaseMasterPort) throws KeeperException, InterruptedException, IOException {
+    private Configuration getHBaseConf(ZooKeeperItf zk, int hbaseMasterPort, String znodePath) throws KeeperException, InterruptedException, IOException {
         // Read the HBase/Hadoop configuration via the master web ui
         // This is debatable, but it avoids any pitfalls with conf dirs and also works with launch-test-lily
-        byte[] masterServerName = removeMetaData(zk.getData("/hbase/master", false, new Stat()));
+        byte[] masterServerName = removeMetaData(zk.getData(znodePath, false, new Stat()));
         String hbaseMasterHostName = getServerName(masterServerName).getHostname();        
 
         String url = String.format("http://%s:%d/conf", hbaseMasterHostName, hbaseMasterPort);

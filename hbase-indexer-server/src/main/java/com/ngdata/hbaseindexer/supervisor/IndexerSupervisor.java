@@ -45,6 +45,7 @@ import com.ngdata.hbaseindexer.conf.IndexerComponentFactoryUtil;
 import com.ngdata.hbaseindexer.conf.IndexerConf;
 import com.ngdata.hbaseindexer.indexer.DirectSolrClassicInputDocumentWriter;
 import com.ngdata.hbaseindexer.indexer.DirectSolrInputDocumentWriter;
+import com.ngdata.hbaseindexer.indexer.FusionDocumentWriter;
 import com.ngdata.hbaseindexer.indexer.Indexer;
 import com.ngdata.hbaseindexer.indexer.IndexingEventListener;
 import com.ngdata.hbaseindexer.indexer.Sharder;
@@ -217,6 +218,8 @@ public class IndexerSupervisor {
                     List<SolrClient> solrServers = createHttpSolrServers(connectionParams, httpClient);
                     solrWriter = new DirectSolrClassicInputDocumentWriter(indexerDef.getName(), solrServers);
                     sharder = createSharder(connectionParams, solrServers.size());
+                } else if (solrMode.equals("fusion")) {
+                    solrWriter = new FusionDocumentWriter(indexerDef.getName(), connectionParams);
                 } else {
                     throw new RuntimeException("Only 'cloud' and 'classic' are valid values for solr.mode, but got " + solrMode);
                 }

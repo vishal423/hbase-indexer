@@ -29,6 +29,7 @@ import com.ngdata.sep.util.io.Closer;
 import com.sun.akuma.Daemon;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import com.yammer.metrics.reporting.ConsoleReporter;
 import com.yammer.metrics.reporting.GangliaReporter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +45,7 @@ import org.mortbay.jetty.servlet.ServletHolder;
 
 import java.util.concurrent.TimeUnit;
 
-public class Main {
+public class Main implements StateWatchingZooKeeper.ExpiredZkSessionListener {
     private final static Log log = LogFactory.getLog(Main.class);
     private HTablePool tablePool;
     private WriteableIndexerModel indexerModel;
@@ -53,6 +54,7 @@ public class Main {
     private IndexerSupervisor indexerSupervisor;
     private StateWatchingZooKeeper zk;
     private Server server;
+    private Configuration myConf;
 
     public static void main(String[] args) {
         Daemon d = new Daemon() {
@@ -100,6 +102,12 @@ public class Main {
      *             as the hbase/hadoop settings. Typically created using {@link HBaseIndexerConfiguration}.
      */
     public void startServices(Configuration conf) throws Exception {
+        startZooKeeperDependentServices(conf);
+        startHttpServer();
+        this.myConf = conf;
+    }
+
+    protected void startZooKeeperDependentServices(Configuration conf) throws Exception {
         String hostname = Strings.domainNamePointerToHostName(DNS.getDefaultHost(
                 conf.get("hbase.regionserver.dns.interface", "default"),
                 conf.get("hbase.regionserver.dns.nameserver", "default")));
@@ -108,7 +116,7 @@ public class Main {
 
         String zkConnectString = conf.get(ConfKeys.ZK_CONNECT_STRING);
         int zkSessionTimeout = conf.getInt(ConfKeys.ZK_SESSION_TIMEOUT, 30000);
-        zk = new StateWatchingZooKeeper(zkConnectString, zkSessionTimeout);
+        zk = new StateWatchingZooKeeper(zkConnectString, zkSessionTimeout, zkSessionTimeout, this /* ExpiredZkSessionListener */);
 
         tablePool = new HTablePool(conf, 10 /* TODO configurable */);
 
@@ -128,8 +136,6 @@ public class Main {
                 indexerProcessRegistry, tablePool, conf);
 
         indexerSupervisor.init();
-        startHttpServer();
-
     }
 
     private void startHttpServer() throws Exception {
@@ -161,12 +167,19 @@ public class Main {
             int interval = conf.getInt(ConfKeys.GANGLIA_INTERVAL, 60);
             log.info("Enabling Ganglia reporting to " + gangliaHost + ":" + gangliaPort);
             GangliaReporter.enable(interval, TimeUnit.SECONDS, gangliaHost, gangliaPort);
+        } else {
+            log.info("No ganglia host specified, enabling the console reporter for logging metrics.");
+            ConsoleReporter.enable(60, TimeUnit.SECONDS);
         }
     }
 
     public void stopServices() {
         log.debug("Stopping HTTP server");
         Closer.close(server);
+        stopZooKeeperDependentServices();
+    }
+
+    protected void stopZooKeeperDependentServices() {
         log.debug("Stopping indexer supervisor");
         Closer.close(indexerSupervisor);
         log.debug("Stopping indexer master");
@@ -177,6 +190,26 @@ public class Main {
         Closer.close(tablePool);
         log.debug("Stopping ZooKeeper connection");
         Closer.close(zk);
+    }
+
+    /**
+     * Called after the ZooKeeper session was expired, stop all services that depend on ZK and restart them.
+     */
+    public synchronized void onSessionExpired() {
+        log.error("ZooKeeper session expired! Restarting all ZooKeeper-dependent services.");
+        stopZooKeeperDependentServices();
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) { Thread.interrupted(); }
+
+        log.info("All HBase services stopped ... restarting ...");
+        try {
+            startZooKeeperDependentServices(myConf);
+        } catch (Exception exc) {
+            log.error("Failed to restart services after ZooKeeper session expiration due to: "+exc, exc);
+            System.exit(1);
+        }
     }
 
     public SepModel getSepModel() {
@@ -196,8 +229,8 @@ public class Main {
     }
 
     public class ShutdownHandler implements Runnable {
-        @Override
         public void run() {
+            log.info("Shutdown hook invoked.");
             stopServices();
         }
     }

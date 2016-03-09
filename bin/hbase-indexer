@@ -99,7 +99,23 @@ COMMAND=$1
 shift
 
 JAVA=$JAVA_HOME/bin/java
-JAVA_HEAP_MAX=-Xmx1000m 
+JAVA_HEAP_MAX="-Xss256k -Xms2g -Xmx2g \
+-XX:NewRatio=3 \
+-XX:SurvivorRatio=4 \
+-XX:TargetSurvivorRatio=90 \
+-XX:MaxTenuringThreshold=8 \
+-XX:+UseConcMarkSweepGC \
+-XX:+UseParNewGC \
+-XX:+CMSScavengeBeforeRemark \
+-XX:PretenureSizeThreshold=64m \
+-XX:+UseCMSInitiatingOccupancyOnly \
+-XX:CMSInitiatingOccupancyFraction=50 \
+-XX:CMSMaxAbortablePrecleanTime=6000 \
+-XX:+CMSParallelRemarkEnabled \
+-XX:+ParallelRefProcEnabled \
+-verbose:gc -XX:+PrintHeapAtGC -XX:+PrintGCDetails \
+-XX:+PrintGCDateStamps -XX:+PrintGCCause -XX:+PrintTenuringDistribution \
+-Xloggc:hbase_indexer_gc.log"
 
 # override default settings for this command, if applicable
 if [ -f "$HBASE_INDEXER_HOME/conf/hbase-indexer-env-$COMMAND.sh" ]; then

@@ -19,6 +19,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <properties>
+
+    <project-version>2.2.0-RC1</project-version>
+
     <version.solr>5.2.1</version.solr>
     <version.guava>11.0.2</version.guava>
     <version.joda-time>1.6</version.joda-time>
@@ -27,7 +30,7 @@
     <version.hbase96>0.96.1.1-cdh5.0.0</version.hbase96>
     <version.hbase98>0.98.6-cdh5.2.0-SNAPSHOT</version.hbase98>
     <version.hbase98mapr>0.98.12-mapr-1506</version.hbase98mapr>
-    <version.hbase110>1.1.0.2.3.0.0-1807</version.hbase110>
+    <version.hbase110>1.1.0</version.hbase110>
     <version.hadoop.hbase96>2.3.0-cdh5.0.0</version.hadoop.hbase96>
     <version.hadoop.hbase98>2.5.0-cdh5.2.0-SNAPSHOT</version.hadoop.hbase98>
     <version.hadoop.hbase98mapr>2.7.0-mapr-1506</version.hadoop.hbase98mapr>
@@ -56,7 +59,7 @@
   <groupId>com.ngdata</groupId>
   <artifactId>hbase-indexer</artifactId>
   <packaging>pom</packaging>
-  <version>1.6-SNAPSHOT</version>
+  <version>${project-version}</version>
   <name>HBase Indexer</name>
 
   <url>http://www.ngdata.com/</url>
@@ -987,7 +990,7 @@
           <dependency>
             <groupId>com.ngdata</groupId>
             <artifactId>hbase-sep-impl</artifactId>
-            <version>1.6-hbase1.1.0.2.3.0.0-1807</version>
+            <version>${project-version}-hbase1.1.0</version>
           </dependency>
       
          <dependency>
@@ -1242,47 +1245,6 @@
 
     <pluginManagement>
       <plugins>
-        <!--
-        <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <version>0.8</version>
-          <configuration>
-            <numUnapprovedLicenses>1</numUnapprovedLicenses>
-            <excludes>
-              <exclude>**/.*</exclude>
-              <exclude>**/target/**</exclude>
-              <exclude>**/README.md</exclude>
-              <exclude>**/readme.txt</exclude>
-              <exclude>**/*log4j*.properties</exclude>
-              <exclude>.git/**</exclude>
-              <exclude>.gitignore</exclude>
-              <exclude>.repository/</exclude>
-              <exclude>.idea/**</exclude>
-              <exclude>**/*.iml</exclude>
-              <exclude>**/.settings/**</exclude>
-              <exclude>**/resources/*.txt</exclude>
-              <exclude>**/resources/**/*.txt</exclude>
-              <exclude>**/resources/**/*.xml</exclude>
-              <exclude>**/conf/*</exclude>
-              <exclude>**/src/it/resources/**</exclude>
-              <exclude>**/META-INF/services/**</exclude>
-              <exclude>**/ForkedAlphaNumericComparator.java</exclude>
-              <exclude>**/*.txt</exclude>
-              <exclude>**/*.patch</exclude>
-            </excludes>
-          </configuration>
-          <executions>
-            <execution>
-              <id>rat-check</id>
-              <phase>test</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>

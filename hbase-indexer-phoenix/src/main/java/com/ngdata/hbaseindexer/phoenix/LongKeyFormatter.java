@@ -30,4 +30,9 @@ public class LongKeyFormatter extends AbstractUniqueKeyFormatter {
     public LongKeyFormatter() {
         super(new LongMapper());
     }
+
+    @Override
+    public String formatKeyValue(Object keyValue) {
+        throw new UnsupportedOperationException("formatKeyValue is not supported");
+    }
 }

@@ -52,11 +52,6 @@ abstract class AbstractUniqueKeyFormatter implements UniqueKeyFormatter {
     }
 
     @Override
-    public String formatKeyValue(KeyValue keyValue) {
-        throw new UnsupportedOperationException("formatKeyValue is not supported");
-    }
-
-    @Override
     public byte[] unformatRow(String keyString) {
         throw new UnsupportedOperationException("Unformatting is not supported");
     }

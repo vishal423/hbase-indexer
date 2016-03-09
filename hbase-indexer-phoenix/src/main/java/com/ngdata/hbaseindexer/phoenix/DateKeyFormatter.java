@@ -30,4 +30,9 @@ public class DateKeyFormatter extends AbstractUniqueKeyFormatter {
     public DateKeyFormatter() {
         super(new DateMapper());
     }
+
+    @Override
+    public String formatKeyValue(Object keyValue) {
+        throw new UnsupportedOperationException("formatKeyValue is not supported");
+    }
 }

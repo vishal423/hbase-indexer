@@ -30,4 +30,9 @@ public class IntegerKeyFormatter extends AbstractUniqueKeyFormatter {
     public IntegerKeyFormatter() {
         super(new IntegerMapper());
     }
+
+    @Override
+    public String formatKeyValue(Object keyValue) {
+        throw new UnsupportedOperationException("formatKeyValue is not supported");
+    }
 }

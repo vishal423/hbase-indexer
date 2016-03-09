@@ -1185,15 +1185,6 @@
     </repository>
 
     <repository>
-      <id>nexus.lucidworks.com-thirdparty</id>
-      <url>https://nexus.lucidworks.com/content/repositories/thirdparty/</url>
-      <name>Lucidworks Nexus</name>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-
-    <repository>
       <id>repository.mapr.com</id>
       <name>MAPR PUBLIC</name>
       <url>http://repository.mapr.com/nexus/content/groups/mapr-public</url>

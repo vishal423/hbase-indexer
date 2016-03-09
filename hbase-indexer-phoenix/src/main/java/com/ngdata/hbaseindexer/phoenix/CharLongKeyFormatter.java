@@ -28,5 +28,10 @@ public class CharLongKeyFormatter  extends AbstractUniqueKeyFormatter {
     public CharLongKeyFormatter() {
         super(new CharLongMapper());
     }
+
+    @Override
+    public String formatKeyValue(Object keyValue) {
+        throw new UnsupportedOperationException("formatKeyValue is not supported");
+    }
 }
 

@@ -22,6 +22,9 @@
 
     <project-version>2.2.1</project-version>
 
+    <hdp.version></hdp.version>
+    <!--hdp.version>.2.3.2.0-2950</hdp.version-->
+
     <version.solr>5.2.1</version.solr>
     <version.guava>11.0.2</version.guava>
     <version.joda-time>1.6</version.joda-time>
@@ -31,12 +34,12 @@
     <version.hbase98>0.98.6-cdh5.2.0-SNAPSHOT</version.hbase98>
     <version.hbase98mapr>0.98.12-mapr-1506</version.hbase98mapr>
     <version.hbase110>1.1.0</version.hbase110>
-    <version.hbase112>1.1.2.2.3.2.0-2950</version.hbase112>
+    <version.hbase112>1.1.2${hdp.version}</version.hbase112>
     <version.hadoop.hbase96>2.3.0-cdh5.0.0</version.hadoop.hbase96>
     <version.hadoop.hbase98>2.5.0-cdh5.2.0-SNAPSHOT</version.hadoop.hbase98>
     <version.hadoop.hbase98mapr>2.7.0-mapr-1506</version.hadoop.hbase98mapr>
     <version.hadoop.hbase110>2.7.0</version.hadoop.hbase110>
-    <version.hadoop.hbase112>2.7.1.2.3.2.0-2950</version.hadoop.hbase112>
+    <version.hadoop.hbase112>2.7.1${hdp.version}</version.hadoop.hbase112>
     <version.hadoop.mr1>2.0.0-mr1-cdh4.4.0</version.hadoop.mr1>
     <version.hadoop.mr1.hbase96>2.3.0-mr1-cdh5.0.0</version.hadoop.mr1.hbase96>
     <version.hadoop.mr1.hbase98>2.5.0-mr1-cdh5.2.0-SNAPSHOT</version.hadoop.mr1.hbase98>
@@ -45,7 +48,7 @@
     <version.hadoop.mr1.hbase112>2.6.0-mr1-cdh5.5.0-SNAPSHOT</version.hadoop.mr1.hbase112>
 
     <version.hadoop>2.0.0-cdh4.4.0</version.hadoop>
-    <version.zookeeper>3.4.6.2.3.2.0-2950</version.zookeeper>
+    <version.zookeeper>3.4.6${hdp.version}</version.zookeeper>
     <version.zookeeper.mapr>3.4.5-mapr-1503</version.zookeeper.mapr>
     <version.jackson>1.9.13</version.jackson>
     <version.httpclient>4.4.1</version.httpclient>

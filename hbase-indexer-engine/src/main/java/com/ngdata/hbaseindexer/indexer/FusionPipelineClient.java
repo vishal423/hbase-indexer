@@ -400,7 +400,7 @@ public class FusionPipelineClient {
     }
   }
 
-  protected Exception postJsonToPipelineWithRetry(String endpoint, List docs, ArrayList<String> mutable, Exception lastExc, int requestId)
+  protected synchronized Exception postJsonToPipelineWithRetry(String endpoint, List docs, ArrayList<String> mutable, Exception lastExc, int requestId)
     throws Exception
   {
     Exception retryAfterException = null;

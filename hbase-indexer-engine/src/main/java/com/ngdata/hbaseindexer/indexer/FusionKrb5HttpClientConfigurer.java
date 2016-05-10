@@ -130,6 +130,7 @@ public class FusionKrb5HttpClientConfigurer extends HttpClientConfigurer {
   private static class FusionJaasConfiguration extends Configuration {
     private Configuration baseConfig;
     private String fusionPrincipal;
+    private AppConfigurationEntry[] globalAppConfigurationEntry;
 
     public FusionJaasConfiguration(String fusionPrincipal) {
       this.fusionPrincipal = fusionPrincipal;
@@ -138,7 +139,10 @@ public class FusionKrb5HttpClientConfigurer extends HttpClientConfigurer {
       } catch (SecurityException var2) {
         this.baseConfig = null;
       }
-
+      if (this.baseConfig !=null) {
+        String clientAppName = System.getProperty(LOGIN_APP_NAME, "Client");
+        this.globalAppConfigurationEntry = this.baseConfig.getAppConfigurationEntry(clientAppName);
+      }
     }
 
     private AppConfigurationEntry overwriteOptions(AppConfigurationEntry app) {
@@ -165,18 +169,16 @@ public class FusionKrb5HttpClientConfigurer extends HttpClientConfigurer {
         return null;
       } else {
         FusionKrb5HttpClientConfigurer.logger.debug("Login prop: " + System.getProperty(LOGIN_CONFIG_PROP));
-        String clientAppName = System.getProperty(LOGIN_APP_NAME, "Client");
-        AppConfigurationEntry[] app = this.baseConfig.getAppConfigurationEntry(clientAppName);
         if (fusionPrincipal == null) {
           FusionKrb5HttpClientConfigurer.logger.debug("fusionPrincipal is null using principal from JAAS file.");
-          return app;
+          return globalAppConfigurationEntry;
         }
-        if (app == null) {
+        if (globalAppConfigurationEntry == null) {
           return null;
         }
 
         // Must be only one Entry, if more use the first one.
-        return new AppConfigurationEntry[]{overwriteOptions(app[0])};
+        return new AppConfigurationEntry[]{overwriteOptions(globalAppConfigurationEntry[0])};
       }
     }
   }

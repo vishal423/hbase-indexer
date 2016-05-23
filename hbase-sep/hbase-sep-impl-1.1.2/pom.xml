@@ -20,7 +20,7 @@
   <groupId>com.ngdata</groupId>
   <artifactId>hbase-sep-impl</artifactId>
   <version>${project-version}-hbase1.1.2</version>
-  <name>HBase Side-Effect Processor: impl for HBase 1.1.0</name>
+  <name>HBase Side-Effect Processor: impl for HBase 1.1.2</name>
 
   <parent>
     <groupId>com.ngdata</groupId>

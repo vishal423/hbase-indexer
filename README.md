@@ -35,3 +35,12 @@ The default build is linked to HBase 0.94. In order to build for HBase 1.1.0,
 run the following command:
 
     mvn clean install -DskipTests -Dhbase.api=1.1.0
+
+
+### Building Hortonworks specific
+
+In order to build the full hbase-indexer project with an specific version of Hortonworks.
+
+      mvn clean package -Pdist -DskipTests -Dhbase.api=1.1.2 -Dhdp.version=".2.4.2.0-258"
+
+**The profile 1.1.2 can be used with the hdp version suffix. (`-Dhdp.version`)**

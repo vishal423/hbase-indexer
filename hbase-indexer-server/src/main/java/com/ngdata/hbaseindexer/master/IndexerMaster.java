@@ -36,6 +36,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.ngdata.hbaseindexer.ConfKeys;
 import com.ngdata.hbaseindexer.SolrConnectionParams;
+import com.ngdata.hbaseindexer.indexer.FusionKrb5HttpClientConfigurer;
 import com.ngdata.hbaseindexer.model.api.*;
 import com.ngdata.hbaseindexer.model.api.IndexerDefinition.BatchIndexingState;
 import com.ngdata.hbaseindexer.model.api.IndexerDefinition.IncrementalIndexingState;
@@ -52,6 +53,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configurable;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.security.User;
 import org.apache.hadoop.mapred.*;
 import org.apache.zookeeper.KeeperException;
 
@@ -91,13 +93,15 @@ public class IndexerMaster {
 
     private int batchStatePollInterval = 60000;
 
+    private String hostname;
+
     /**
      * Total number of IndexerModel events processed (useful in test cases).
      */
     private final AtomicInteger eventCount = new AtomicInteger();
 
     public IndexerMaster(ZooKeeperItf zk, WriteableIndexerModel indexerModel, Configuration mapReduceConf,
-                         Configuration hbaseConf, String zkConnectString, SepModel sepModel) {
+                         Configuration hbaseConf, String zkConnectString, SepModel sepModel, String hostname) {
 
         this.zk = zk;
         this.indexerModel = indexerModel;
@@ -105,6 +109,7 @@ public class IndexerMaster {
         this.hbaseConf = hbaseConf;
         this.zkConnectString = zkConnectString;
         this.sepModel = sepModel;
+        this.hostname = hostname;
 
         this.batchStatePollInterval = hbaseConf.getInt("hbaseindexer.batch.poll.interval", 60000);
 
@@ -136,6 +141,11 @@ public class IndexerMaster {
 
     @PostConstruct
     public void start() throws LeaderElectionSetupException, IOException, InterruptedException, KeeperException {
+        String loginConf = System.getProperty(FusionKrb5HttpClientConfigurer.LOGIN_CONFIG_PROP);
+        if (loginConf != null && !loginConf.isEmpty()) {
+            User.login(hbaseConf, "hbase.regionserver.keytab.file",
+                        "hbase.regionserver.kerberos.principal", hostname);
+        }
         leaderElection = new LeaderElection(zk, "Indexer Master",
                 hbaseConf.get(ConfKeys.ZK_ROOT_NODE) + "/masters",
                 new MyLeaderElectionCallback());

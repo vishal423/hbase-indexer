@@ -15,6 +15,7 @@
  */
 package com.ngdata.hbaseindexer;
 
+import com.ngdata.hbaseindexer.indexer.FusionKrb5HttpClientConfigurer;
 import com.ngdata.hbaseindexer.master.IndexerMaster;
 import com.ngdata.hbaseindexer.model.api.IndexerProcessRegistry;
 import com.ngdata.hbaseindexer.model.api.WriteableIndexerModel;
@@ -36,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.util.Strings;
+import org.apache.hadoop.hbase.zookeeper.ZKUtil;
 import org.apache.hadoop.net.DNS;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
@@ -116,6 +118,13 @@ public class Main implements StateWatchingZooKeeper.ExpiredZkSessionListener {
 
         String zkConnectString = conf.get(ConfKeys.ZK_CONNECT_STRING);
         int zkSessionTimeout = conf.getInt(ConfKeys.ZK_SESSION_TIMEOUT, 30000);
+
+        String loginConf = System.getProperty(FusionKrb5HttpClientConfigurer.LOGIN_CONFIG_PROP);
+        if (loginConf != null && !loginConf.isEmpty()) {
+            ZKUtil.loginClient(conf, "hbase.zookeeper.client.keytab.file",
+                "hbase.zookeeper.client.kerberos.principal", hostname);
+        }
+
         zk = new StateWatchingZooKeeper(zkConnectString, zkSessionTimeout, zkSessionTimeout, this /* ExpiredZkSessionListener */);
 
         tablePool = new HTablePool(conf, 10 /* TODO configurable */);
@@ -127,7 +136,7 @@ public class Main implements StateWatchingZooKeeper.ExpiredZkSessionListener {
         sepModel = new SepModelImpl(zk, conf);
 
         indexerMaster = new IndexerMaster(zk, indexerModel, conf, conf, zkConnectString,
-                sepModel);
+                sepModel, hostname);
         indexerMaster.start();
 
         IndexerRegistry indexerRegistry = new IndexerRegistry();

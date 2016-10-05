@@ -21,7 +21,7 @@
 package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PDouble;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,13 +34,13 @@ public class DoubleMapperTest {
     public void testMap() {
         assertEquals(
                 ImmutableList.of(Math.PI),
-                mapper.map(PDataType.DOUBLE.toBytes(Math.PI)));
+                mapper.map(PDouble.INSTANCE.toBytes(Math.PI)));
     }
 
     @Test
     public void testMap_EndOfCompositeValue() {
-        byte[] buffer = new byte[PDataType.DOUBLE.getByteSize() + 2];
-        PDataType.DOUBLE.toBytes(Math.PI, buffer, 2);
+        byte[] buffer = new byte[PDouble.INSTANCE.getByteSize() + 2];
+        PDouble.INSTANCE.toBytes(Math.PI, buffer, 2);
         assertEquals(
                 ImmutableList.of(Math.PI),
                 mapper.map(buffer));

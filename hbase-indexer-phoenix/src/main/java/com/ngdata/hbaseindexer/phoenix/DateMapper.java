@@ -20,10 +20,10 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PDate;
 
 public class DateMapper extends AbstractFixedWidthMapper {
     public DateMapper() {
-        super(PDataType.DATE);
+        super(PDate.INSTANCE);
     }
 }

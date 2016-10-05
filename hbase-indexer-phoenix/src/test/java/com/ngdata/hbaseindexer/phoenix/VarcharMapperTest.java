@@ -21,7 +21,7 @@
 package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PVarchar;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,14 +34,14 @@ public class VarcharMapperTest {
     public void testMap() {
         assertEquals(
                 ImmutableList.of("TestValue"),
-                mapper.map(PDataType.VARCHAR.toBytes("TestValue")));
+                mapper.map(PVarchar.INSTANCE.toBytes("TestValue")));
     }
 
     @Test
     public void testMapNull() {
         assertEquals(
                 ImmutableList.of(),
-                mapper.map(PDataType.VARCHAR.toBytes(null)));
+                mapper.map(PVarchar.INSTANCE.toBytes(null)));
     }
 
 }

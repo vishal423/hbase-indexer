@@ -22,7 +22,7 @@ package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
 import com.ngdata.hbaseindexer.parse.ByteArrayValueMapper;
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PDataType;
 
 import java.util.Collection;
 
@@ -40,6 +40,11 @@ abstract class AbstractFixedWidthMapper implements ByteArrayValueMapper {
     @Override
     public Collection<? extends Object> map(byte[] bytes) {
         Object value = dataType.toObject(bytes, bytes.length - dataType.getByteSize(), dataType.getByteSize());
-        return ImmutableList.of(value);
+        if (value == null) {
+            return ImmutableList.of();
+        } else {
+            return ImmutableList.of(value);
+        }
+        //return ImmutableList.of(value);
     }
 }

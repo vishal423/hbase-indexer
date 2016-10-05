@@ -20,7 +20,7 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PVarchar;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +29,7 @@ public class VarcharKeyFormatterTest {
 
     @Test
     public void testFormatRow() {
-        assertEquals("forty-two", new VarcharKeyFormatter().formatRow(PDataType.VARCHAR.toBytes("forty-two")));
+        assertEquals("forty-two", new VarcharKeyFormatter().formatRow(PVarchar.INSTANCE.toBytes("forty-two")));
     }
 
 }

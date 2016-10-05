@@ -22,7 +22,7 @@ package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
 import com.ngdata.hbaseindexer.parse.ByteArrayValueMapper;
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PVarchar;
 
 import java.util.Collection;
 
@@ -32,7 +32,7 @@ import java.util.Collection;
 public class VarcharMapper implements ByteArrayValueMapper {
     @Override
     public Collection<? extends Object> map(byte[] bytes) {
-        Object value = PDataType.VARCHAR.toObject(bytes);
+        Object value = PVarchar.INSTANCE.toObject(bytes);
         if (value == null) {
             return ImmutableList.of();
         } else {

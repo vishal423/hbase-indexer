@@ -20,21 +20,18 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import com.google.common.collect.ImmutableList;
 import com.ngdata.hbaseindexer.parse.ByteArrayValueMapper;
-import org.apache.phoenix.schema.PDataType;
 
-import java.sql.Array;
-import java.sql.SQLException;
 import java.util.Collection;
 
 /**
- * {@link ByteArrayValueMapper} for {@link PDataType#VARCHAR_ARRAY} values.
+ * {@link ByteArrayValueMapper} for {PDataType#VARCHAR_ARRAY} values.
  */
 public class VarcharArrayMapper implements ByteArrayValueMapper {
     @Override
     public Collection<? extends Object> map(byte[] bytes) {
-        Array values = (java.sql.Array)PDataType.VARCHAR_ARRAY.toObject(bytes);
+        throw new UnsupportedOperationException("operation not supported");
+        /*Array values = (java.sql.Array)PDataType.VARCHAR_ARRAY.toObject(bytes);
         if (values == null) {
             return ImmutableList.of();
         } else {
@@ -43,6 +40,6 @@ public class VarcharArrayMapper implements ByteArrayValueMapper {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
     }
 }

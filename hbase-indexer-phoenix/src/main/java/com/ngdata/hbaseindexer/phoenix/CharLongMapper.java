@@ -20,28 +20,27 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import com.google.common.collect.ImmutableList;
 import com.ngdata.hbaseindexer.parse.ByteArrayValueMapper;
-import org.apache.phoenix.schema.PDataType;
 
 import java.util.Collection;
 
 /**
  * Formats a Phoenix row key consisting of a CHAR(1) and a BIGINT into the string concatenation of these
  * two.
- *
+ * <p>
  * <p>The use-case are the multitenant Lily keys, where the tenant is a CHAR(1).</p>
  */
 public class CharLongMapper implements ByteArrayValueMapper {
     @Override
     public Collection<? extends Object> map(byte[] bytes) {
-        PDataType longDataType = PDataType.LONG;
+        throw new UnsupportedOperationException("operation not supported");
+       /* PDataType longDataType = PDataType.LONG;
         PDataType charDataType = PDataType.CHAR;
         int charLength = 1;
 
         Object longValue = longDataType.toObject(bytes, bytes.length - longDataType.getByteSize(), longDataType.getByteSize());
         Object charValue = charDataType.toObject(bytes, bytes.length - longDataType.getByteSize() - charLength, charLength);
 
-        return ImmutableList.of(charValue.toString() + longValue.toString());
+        return ImmutableList.of(charValue.toString() + longValue.toString());*/
     }
 }

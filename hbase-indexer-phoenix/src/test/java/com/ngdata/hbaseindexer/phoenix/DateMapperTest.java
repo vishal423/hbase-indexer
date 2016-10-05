@@ -21,7 +21,7 @@
 package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PDate;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -38,13 +38,13 @@ public class DateMapperTest {
     public void testMap() {
         assertEquals(
                 ImmutableList.of(now.toDate()),
-                mapper.map(PDataType.DATE.toBytes(now.toDate())));
+                mapper.map(PDate.INSTANCE.toBytes(now.toDate())));
     }
 
     @Test
     public void testMap_EndOfCompositeValue() {
-        byte[] buffer = new byte[PDataType.DATE.getByteSize() + 2];
-        PDataType.DATE.toBytes(now.toDate(), buffer, 2);
+        byte[] buffer = new byte[PDate.INSTANCE.getByteSize() + 2];
+        PDate.INSTANCE.toBytes(now.toDate(), buffer, 2);
         assertEquals(
                 ImmutableList.of(now.toDate()),
                 mapper.map(buffer));

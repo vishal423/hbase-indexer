@@ -20,7 +20,7 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PInteger;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -29,6 +29,6 @@ public class IntegerKeyFormatterTest {
 
     @Test
     public void testFormatRow() {
-        assertEquals("42", new IntegerKeyFormatter().formatRow(PDataType.INTEGER.toBytes(42)));
+        assertEquals("42", new IntegerKeyFormatter().formatRow(PInteger.INSTANCE.toBytes(42)));
     }
 }

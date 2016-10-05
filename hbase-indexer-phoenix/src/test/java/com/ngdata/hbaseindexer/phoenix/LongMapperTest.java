@@ -21,7 +21,7 @@
 package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PLong;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,14 +34,14 @@ public class LongMapperTest {
     public void testMap() {
         assertEquals(
                 ImmutableList.of(42L),
-                mapper.map(PDataType.LONG.toBytes(42L)));
+                mapper.map(PLong.INSTANCE.toBytes(42L)));
 
     }
 
     @Test
     public void testMap_EndOfCompositeValue() {
-        byte[] buffer = new byte[PDataType.LONG.getByteSize() + 2];
-        PDataType.LONG.toBytes(42L, buffer, 2);
+        byte[] buffer = new byte[PLong.INSTANCE.getByteSize() + 2];
+        PLong.INSTANCE.toBytes(42L, buffer, 2);
 
         assertEquals(
                 ImmutableList.of(42L),

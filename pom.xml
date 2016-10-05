@@ -59,7 +59,7 @@
     <version.search.hbase112>1.0.0-cdh5.0.0</version.search.hbase112>
 
     <version.jersey>1.17</version.jersey>
-    <version.phoenix>4.2.2</version.phoenix>
+    <version.phoenix>4.7.0.2.5.0.0-1245</version.phoenix>
 
     <!-- Tells maven plugins what file encoding to use -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

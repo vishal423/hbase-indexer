@@ -20,13 +20,13 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PLong;
 
 /**
  * {@code ByteArrayDoubleMapper} for {@code LONG} values.
  */
 public class LongMapper extends AbstractFixedWidthMapper {
     public LongMapper() {
-        super(PDataType.LONG);
+        super(PLong.INSTANCE);
     }
 }

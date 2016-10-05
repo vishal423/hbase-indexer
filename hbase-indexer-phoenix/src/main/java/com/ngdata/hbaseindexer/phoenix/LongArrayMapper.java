@@ -20,13 +20,8 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Longs;
 import com.ngdata.hbaseindexer.parse.ByteArrayValueMapper;
-import org.apache.phoenix.schema.PDataType;
 
-import java.sql.Array;
-import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -35,7 +30,8 @@ import java.util.Collection;
 public class LongArrayMapper implements ByteArrayValueMapper {
     @Override
     public Collection<? extends Object> map(byte[] bytes) {
-        Array values = (Array)PDataType.LONG_ARRAY.toObject(bytes);
+        throw new UnsupportedOperationException("formatKeyValue is not supported");
+        /*Array values = (Array)PDataType.LONG_ARRAY.toObject(bytes);
         if (values == null) {
             return ImmutableList.of();
         } else {
@@ -44,6 +40,6 @@ public class LongArrayMapper implements ByteArrayValueMapper {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
     }
 }

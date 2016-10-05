@@ -21,13 +21,13 @@
 package com.ngdata.hbaseindexer.phoenix;
 
 
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PDouble;
 
 /**
  * {@code ByteArrayDoubleMapper} for {@code DOUBLE} values.
  */
 public class DoubleMapper extends AbstractFixedWidthMapper {
     public DoubleMapper() {
-        super(PDataType.DOUBLE);
+        super(PDouble.INSTANCE);
     }
 }

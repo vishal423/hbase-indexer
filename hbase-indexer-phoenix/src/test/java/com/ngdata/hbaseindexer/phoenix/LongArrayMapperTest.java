@@ -21,8 +21,9 @@
 package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.phoenix.schema.PDataType;
-import org.apache.phoenix.schema.PhoenixArray;
+import org.apache.phoenix.schema.types.PLong;
+import org.apache.phoenix.schema.types.PLongArray;
+import org.apache.phoenix.schema.types.PhoenixArray;
 import org.apache.phoenix.util.ByteUtil;
 import org.junit.Test;
 
@@ -33,10 +34,10 @@ public class LongArrayMapperTest {
 
     @Test
     public void testMap() {
-        PhoenixArray array = new PhoenixArray(PDataType.LONG, new Long[] { 1L, 10L, 100L });
+        PhoenixArray array = new PhoenixArray(PLong.INSTANCE, new Long[]{1L, 10L, 100L});
         assertEquals(
                 ImmutableList.of(1L, 10L, 100L),
-                mapper.map(PDataType.LONG_ARRAY.toBytes(array)));
+                mapper.map(PLongArray.INSTANCE.toBytes(array)));
     }
 
     @Test

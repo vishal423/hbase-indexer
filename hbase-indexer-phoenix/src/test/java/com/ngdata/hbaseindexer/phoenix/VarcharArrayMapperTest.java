@@ -21,8 +21,9 @@
 package com.ngdata.hbaseindexer.phoenix;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.phoenix.schema.PDataType;
-import org.apache.phoenix.schema.PhoenixArray;
+import org.apache.phoenix.schema.types.PVarchar;
+import org.apache.phoenix.schema.types.PVarcharArray;
+import org.apache.phoenix.schema.types.PhoenixArray;
 import org.apache.phoenix.util.ByteUtil;
 import org.junit.Test;
 
@@ -33,10 +34,10 @@ public class VarcharArrayMapperTest {
 
     @Test
     public void testMap() {
-        PhoenixArray array = new PhoenixArray(PDataType.VARCHAR, new String[]{"a", "b", "c"});
+        PhoenixArray array = new PhoenixArray(PVarchar.INSTANCE, new String[]{"a", "b", "c"});
         assertEquals(
                 ImmutableList.of("a", "b", "c"),
-                mapper.map(PDataType.VARCHAR_ARRAY.toBytes(array)));
+                mapper.map(PVarcharArray.INSTANCE.toBytes(array)));
     }
 
     @Test

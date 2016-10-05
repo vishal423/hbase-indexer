@@ -20,13 +20,14 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import org.apache.phoenix.schema.PDataType;
+import org.apache.phoenix.schema.types.PInteger;
 
 /**
  * {@code ByteArrayDoubleMapper} for {@code INTEGER} values.
  */
 public class IntegerMapper extends AbstractFixedWidthMapper {
+
     public IntegerMapper() {
-        super(PDataType.INTEGER);
+        super(PInteger.INSTANCE);
     }
 }

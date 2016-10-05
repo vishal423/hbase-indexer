@@ -20,16 +20,14 @@
 
 package com.ngdata.hbaseindexer.phoenix;
 
-import org.apache.phoenix.schema.types.PLong;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.phoenix.schema.types.PFloat;
 
-public class LongKeyFormatterTest {
-
-    @Test
-    public void testFormatRow() {
-        assertEquals("42", new LongKeyFormatter().formatRow(PLong.INSTANCE.toBytes(42L)));
+/**
+ * {@code ByteArrayDoubleMapper} for {@code DOUBLE} values.
+ */
+public class FloatMapper extends AbstractFixedWidthMapper {
+    public FloatMapper() {
+        super(PFloat.INSTANCE);
     }
-
 }
